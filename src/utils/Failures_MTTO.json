@@ -1,0 +1,43 @@
+[
+  {
+    "id_maquina": "PME-306",
+    "nombre": "PRENSA DE CALENTADO (PME 306)",
+    "nave": "NAVE 3/A",
+    "categorias": [
+      {
+        "id_cat": "ELEC-01",
+        "nombre": "Electrónica/Eléctrica",
+        "fallas": [
+          {"codigo": "MTTO-ERR-101", "descripcion": "ERROR EN PLC - PÉRDIDA DE SEÑAL"},
+          {"codigo": "MTTO-ERR-102", "descripcion": "FALLA EN FOTOSELDA L3"},
+          {"codigo": "MTTO-ERR-103", "descripcion": "SOBRECALENTAMIENTO EN DRIVES"}
+        ]
+      },
+      {
+        "id_cat": "MECH-01",
+        "nombre": "Mecánica",
+        "fallas": [
+          {"codigo": "MTTO-ERR-201", "descripcion": "DESAJUSTE DE MORDAZAS"},
+          {"codigo": "MTTO-ERR-202", "descripcion": "BANDA DE CLAVOS DAÑADA"},
+          {"codigo": "MTTO-ERR-203", "descripcion": "FALTA GUARDA DE SEGURIDAD"}
+        ]
+      }
+    ]
+  },
+  {
+    "id_maquina": "ESP-301",
+    "nombre": "ESPUMADORA ALTA PRESIÓN (ESP 301)",
+    "nave": "NAVE 3/A",
+    "categorias": [
+      {
+        "id_cat": "MECH-02",
+        "nombre": "Mecánica",
+        "fallas": [
+          {"codigo": "MTTO-ERR-301", "descripcion": "INYECTOR DE ISO SUCIO"},
+          {"codigo": "MTTO-ERR-302", "descripcion": "FALSO CONTACTO EN CABEZAL"},
+          {"codigo": "MTTO-ERR-303", "descripcion": "FALTA DE PRESIÓN EN BOMBA"}
+        ]
+      }
+    ]
+  }
+]

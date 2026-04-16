@@ -1,0 +1,5 @@
+[
+  {"id_plan": "PLAN-TM-01", "turno": "Matutino", "sku": "DASH-INNER-001", "target_hr": 45},
+  {"id_plan": "PLAN-TV-01", "turno": "Vespertino", "sku": "DASH-INNER-001", "target_hr": 42},
+  {"id_plan": "PLAN-TN-01", "turno": "Nocturno", "sku": "DASH-INNER-001", "target_hr": 38}
+]

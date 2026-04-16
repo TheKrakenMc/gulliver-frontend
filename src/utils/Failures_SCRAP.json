@@ -1,0 +1,16 @@
+{
+  "Inyeccion": [
+    {"codigo": "QUAL-SCR-01", "defecto": "REBABA EXCESIVA"},
+    {"codigo": "QUAL-SCR-02", "defecto": "FALTA DE MATERIAL"},
+    {"codigo": "QUAL-SCR-03", "defecto": "PUNTO NEGRO / CONTAMINACIÓN"}
+  ],
+  "Termoformado": [
+    {"codigo": "QUAL-SCR-04", "defecto": "PLIEGUE EN MATERIAL"},
+    {"codigo": "QUAL-SCR-05", "defecto": "GROSOR INSUFICIENTE"},
+    {"codigo": "QUAL-SCR-06", "defecto": "DESPRENDIMIENTO DE ALFOMBRA"}
+  ],
+  "Corte": [
+    {"codigo": "QUAL-SCR-07", "defecto": "CORTE DESFAZADO"},
+    {"codigo": "QUAL-SCR-08", "defecto": "FILO DAÑADO / REBABA"}
+  ]
+}

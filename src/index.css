@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ─── */
+:root {
+  /* Brand palette */
+  --gv-primary: #2563eb;
+  --gv-primary-hover: #1d4ed8;
+  --gv-accent: #06b6d4;
+  --gv-success: #10b981;
+  --gv-warning: #f59e0b;
+  --gv-danger: #ef4444;
+
+  /* Surfaces – Light mode */
+  --gv-bg: #f8fafc;
+  --gv-surface: #ffffff;
+  --gv-surface-alt: #f1f5f9;
+  --gv-border: #e2e8f0;
+  --gv-border-hover: #cbd5e1;
+
+  /* Text – Light mode */
+  --gv-text: #334155;
+  --gv-text-muted: #94a3b8;
+  --gv-text-heading: #0f172a;
+
+  /* Sidebar – Light mode */
+  --gv-sidebar: #0f172a;
+  --gv-sidebar-text: #cbd5e1;
+  --gv-sidebar-active: rgba(37, 99, 235, 0.15);
+  --gv-sidebar-active-text: #60a5fa;
+
+  /* Shadows */
+  --gv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --gv-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --gv-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --gv-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+
+  /* Radii & transitions */
+  --gv-radius: 12px;
+  --gv-radius-sm: 8px;
+  --gv-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Dark Mode ─── */
+.dark {
+  --gv-primary: #3b82f6;
+  --gv-primary-hover: #60a5fa;
+  --gv-accent: #22d3ee;
+
+  --gv-bg: #0b0f1a;
+  --gv-surface: #111827;
+  --gv-surface-alt: #1e293b;
+  --gv-border: #1e293b;
+  --gv-border-hover: #334155;
+
+  --gv-text: #cbd5e1;
+  --gv-text-muted: #64748b;
+  --gv-text-heading: #f1f5f9;
+
+  --gv-sidebar: #060a13;
+  --gv-sidebar-text: #94a3b8;
+  --gv-sidebar-active: rgba(59, 130, 246, 0.2);
+  --gv-sidebar-active-text: #60a5fa;
+
+  --gv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --gv-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --gv-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --gv-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Base reset ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--gv-bg);
+  color: var(--gv-text);
+  transition: background-color var(--gv-transition), color var(--gv-transition);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ─── Scrollbar styling ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gv-border-hover);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gv-text-muted);
+}
+
+/* ─── Utility: glassmorphism card ─── */
+.glass-card {
+  background: var(--gv-surface);
+  border: 1px solid var(--gv-border);
+  border-radius: var(--gv-radius);
+  box-shadow: var(--gv-shadow);
+  transition: box-shadow var(--gv-transition), border-color var(--gv-transition);
+}
+.glass-card:hover {
+  box-shadow: var(--gv-shadow-md);
+  border-color: var(--gv-border-hover);
+}
+
+/* ─── Utility: focus rings ─── */
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--gv-primary);
+  outline-offset: 2px;
+}
