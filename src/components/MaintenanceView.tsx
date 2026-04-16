@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   Wrench,
   ChevronDown,
@@ -15,6 +16,7 @@ import type { MTTOMaquina, MTTOCategoria, MTTOFalla, WorkOrder } from '../types'
 const machines = mttoCatalog as MTTOMaquina[];
 
 export default function MaintenanceView() {
+  const { t } = useTranslation();
   const [selectedMachine, setSelectedMachine] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedFault, setSelectedFault] = useState<string>('');
@@ -150,11 +152,11 @@ export default function MaintenanceView() {
             <Wrench size={18} color="#f97316" />
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gv-text-heading)', margin: 0, letterSpacing: -0.5 }}>
-            Mantenimiento — Control de Fallas
+            {t('maintenance.title')}
           </h1>
         </div>
         <p style={{ fontSize: 13, color: 'var(--gv-text-muted)', margin: 0, paddingLeft: 46 }}>
-          Selección jerárquica: Máquina → Categoría → Falla específica (sin texto libre)
+          {t('maintenance.subtitle')}
         </p>
       </div>
 
@@ -179,7 +181,7 @@ export default function MaintenanceView() {
             }}
           >
             <CheckCircle2 size={18} />
-            Orden de Trabajo creada exitosamente
+            {t('maintenance.success_msg')}
           </motion.div>
         )}
       </AnimatePresence>
@@ -197,7 +199,7 @@ export default function MaintenanceView() {
           display: 'flex', alignItems: 'center', gap: 8,
         }}>
           <Zap size={16} color="var(--gv-primary)" />
-          Nueva Orden de Trabajo
+          {t('maintenance.new_wo')}
         </h3>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
@@ -211,7 +213,7 @@ export default function MaintenanceView() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 11, fontWeight: 800,
               }}>1</span>
-              Activo Fijo / Máquina
+              {t('maintenance.machine')}
             </div>
             <div style={{ position: 'relative' }}>
               <select
@@ -240,7 +242,7 @@ export default function MaintenanceView() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 11, fontWeight: 800,
               }}>2</span>
-              Categoría / Subsistema
+              {t('maintenance.category')}
             </div>
             <div style={{ position: 'relative' }}>
               <select
@@ -274,7 +276,7 @@ export default function MaintenanceView() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 11, fontWeight: 800,
               }}>3</span>
-              Falla Específica
+              {t('maintenance.fault')}
             </div>
             <div style={{ position: 'relative' }}>
               <select
@@ -306,7 +308,7 @@ export default function MaintenanceView() {
           <div style={{ width: 200 }}>
             <div style={labelStyle}>
               <AlertCircle size={12} />
-              Prioridad
+              {t('maintenance.priority')}
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               {(['Crítica', 'Alta', 'Media', 'Baja'] as const).map((p) => (
@@ -357,7 +359,7 @@ export default function MaintenanceView() {
             }}
           >
             <FileText size={16} />
-            Abrir Orden de Trabajo
+            {t('maintenance.btn_open_wo')}
           </motion.button>
         </div>
 
@@ -409,7 +411,7 @@ export default function MaintenanceView() {
         <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--gv-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gv-text-heading)', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Clock size={16} color="var(--gv-primary)" />
-            Órdenes de Trabajo Recientes
+            {t('maintenance.recent_wo')}
           </h3>
           <span style={{ fontSize: 12, color: 'var(--gv-text-muted)', fontWeight: 600 }}>{workOrders.length} registros</span>
         </div>
@@ -417,7 +419,7 @@ export default function MaintenanceView() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Inter', sans-serif" }}>
             <thead>
               <tr>
-                {['ID', 'Máquina', 'Categoría', 'Falla', 'Prioridad', 'Status', 'Fecha'].map((h) => (
+                {[t('maintenance.col_id'), t('maintenance.col_machine'), t('maintenance.col_category'), t('maintenance.col_fault'), t('maintenance.col_priority'), t('maintenance.col_status'), t('maintenance.col_date')].map((h) => (
                   <th key={h} style={{
                     padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700,
                     textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gv-text-muted)',

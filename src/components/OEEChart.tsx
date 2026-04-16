@@ -39,7 +39,7 @@ export default function OEEChart({ data }: OEEChartProps) {
       </div>
 
       {/* Chart */}
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', top: 60 }}>
         {/* Y-axis labels + grid */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {[100, 80, 60, 40, 20, 0].map((val) => (

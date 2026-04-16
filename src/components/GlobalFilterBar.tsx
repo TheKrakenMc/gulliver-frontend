@@ -1,4 +1,6 @@
-import { Sun, Moon, ChevronDown } from 'lucide-react';
+import { Sun, Moon, ChevronDown, Globe } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import type { FilterState } from '../types';
 import { filterOptions } from '../data/mockData';
 
@@ -15,6 +17,13 @@ export default function GlobalFilterBar({
   darkMode,
   onToggleDarkMode,
 }: GlobalFilterBarProps) {
+  const { t, i18n } = useTranslation();
+
+  const isSpanish = i18n.language === 'es';
+
+  const toggleLanguage = () => {
+    i18n.changeLanguage(isSpanish ? 'en' : 'es');
+  };
   const selectStyle: React.CSSProperties = {
     appearance: 'none',
     background: 'var(--gv-surface-alt)',
@@ -71,7 +80,7 @@ export default function GlobalFilterBar({
       <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', flexWrap: 'wrap' }}>
         {/* Location */}
         <div>
-          <div style={labelStyle}>Location</div>
+          <div style={labelStyle}>{t('filters.location')}</div>
           <div style={wrapperStyle}>
             <select
               style={selectStyle}
@@ -91,7 +100,7 @@ export default function GlobalFilterBar({
 
         {/* Business Unit */}
         <div>
-          <div style={labelStyle}>Business Unit</div>
+          <div style={labelStyle}>{t('filters.businessUnit')}</div>
           <div style={wrapperStyle}>
             <select
               style={selectStyle}
@@ -110,7 +119,7 @@ export default function GlobalFilterBar({
 
         {/* Facility */}
         <div>
-          <div style={labelStyle}>Facility</div>
+          <div style={labelStyle}>{t('filters.facility')}</div>
           <div style={wrapperStyle}>
             <select
               style={selectStyle}
@@ -129,7 +138,7 @@ export default function GlobalFilterBar({
 
         {/* Process */}
         <div>
-          <div style={labelStyle}>Process</div>
+          <div style={labelStyle}>{t('filters.process')}</div>
           <div style={wrapperStyle}>
             <select
               style={selectStyle}
@@ -145,27 +154,70 @@ export default function GlobalFilterBar({
         </div>
       </div>
 
-      {/* Dark mode toggle */}
-      <button
-        onClick={onToggleDarkMode}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: 40,
-          height: 40,
-          borderRadius: 10,
-          border: '1px solid var(--gv-border)',
-          background: 'var(--gv-surface-alt)',
-          color: 'var(--gv-text)',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          flexShrink: 0,
-        }}
-        title={darkMode ? 'Light Mode (Reportes)' : 'Dark Mode (Control)'}
-      >
-        {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-      </button>
+      {/* Actions */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+        {/* Language Switcher */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={toggleLanguage}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '6px 12px',
+            borderRadius: 10,
+            border: '1px solid var(--gv-border)',
+            background: 'var(--gv-surface-alt)',
+            color: 'var(--gv-text)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            fontSize: 13,
+            fontWeight: 600,
+            fontFamily: 'inherit',
+          }}
+          title={isSpanish ? 'Switch to English' : 'Cambiar a Español'}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={i18n.language}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.2 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <span style={{ fontSize: 18 }}>
+                {isSpanish ? '🇲🇽' : '🇺🇸'}
+              </span>
+              <span style={{ color: 'var(--gv-text-muted)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {isSpanish ? 'ES' : 'EN'}
+              </span>
+            </motion.div>
+          </AnimatePresence>
+        </motion.button>
+
+        {/* Dark mode toggle */}
+        <button
+          onClick={onToggleDarkMode}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 40,
+            height: 40,
+            borderRadius: 10,
+            border: '1px solid var(--gv-border)',
+            background: 'var(--gv-surface-alt)',
+            color: 'var(--gv-text)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          title={darkMode ? 'Light Mode (Reportes)' : 'Dark Mode (Control)'}
+        >
+          {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
+      </div>
     </header>
   );
 }

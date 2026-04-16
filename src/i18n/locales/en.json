@@ -1,0 +1,130 @@
+{
+  "sidebar": {
+    "dashboard": "OEE Dashboard",
+    "hourByHour": "Operational Log",
+    "logistics": "Logistics (Plan)",
+    "maintenance": "Maintenance",
+    "quality": "Quality (Scrap)",
+    "pdca": "Continuous Improvement",
+    "section_production": "Production",
+    "section_planning": "Planning",
+    "section_support": "Support"
+  },
+  "dashboard": {
+    "capacity_ideal": "Ideal Capacity",
+    "loss_availability": "Availability Loss",
+    "loss_performance": "Performance Loss",
+    "loss_quality": "Quality Loss",
+    "final_oee": "Final OEE",
+    "bridge_title": "Bridge Chart — Efficiency Drop",
+    "bridge_desc": "Loss breakdown: 100% → Final OEE",
+    "availability": "Availability",
+    "performance": "Performance",
+    "quality": "Quality",
+    "red": "RED",
+    "yellow": "YELLOW",
+    "green": "GREEN",
+    "executive_scorecard": "Executive Scorecard",
+    "current_shift": "Current Shift",
+    "in_production": "In Production",
+    "performance_traffic_light": "Performance Traffic Light"
+  },
+  "hourByHour": {
+    "title": "Operational Log — Hour by Hour",
+    "shift_target": "Shift 1 (06:00 – 14:00) · Target:",
+    "validation_panel": "Validation Panel",
+    "total_ok": "Total OK",
+    "scrap": "Scrap",
+    "downtime": "Downtime",
+    "efficiency": "Efficiency",
+    "faults": "Faults",
+    "scrap_rate": "Scrap Rate",
+    "add_row": "Add Hour Row",
+    "registered_faults": "Registered Faults",
+    "registered_scrap": "Registered Scrap",
+    "register_fault": "Register fault",
+    "register_defect": "Register defect",
+    "comments": "Comments"
+  },
+  "quality": {
+    "title": "Quality — Scrap by Technology",
+    "subtitle": "Defect registration by buttons — no free text input",
+    "total_scrap": "Total Scrap",
+    "reset": "Reset"
+  },
+  "pdca": {
+    "title": "PDCA Activities — Continuous Improvement",
+    "subtitle": "Continuous improvement activities tracking board",
+    "plan_desc": "Identify and plan",
+    "do_desc": "Execute actions",
+    "check_desc": "Verify results",
+    "act_desc": "Standardize improvements",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "logistics": {
+    "title": "Logistics — Master Schedule",
+    "subtitle": "The targets defined here automatically feed the Hour by Hour view",
+    "target_shift": "Shift Target (8h)",
+    "saved_msg": "Plan saved — Targets injected to Operational Log",
+    "col_line": "Line",
+    "col_shift": "Shift",
+    "col_time": "Time",
+    "col_sku": "Part No. (SKU)",
+    "col_target_hr": "Target / Hour",
+    "col_target_shift": "Shift Target (8h)",
+    "btn_add_line": "Add Line",
+    "btn_save_publish": "Save and Publish Targets",
+    "info_title": "Automatic integration:",
+    "info_desc": "Target / Hour values defined in this module are directly injected as the target in the Operational Log (Hour by Hour) view. The first record defines the default target for the current shift."
+  },
+  "maintenance": {
+    "title": "Maintenance — Fault Control",
+    "subtitle": "Hierarchical selection: Machine → Category → Specific fault (no free text)",
+    "success_msg": "Work Order created successfully",
+    "new_wo": "New Work Order",
+    "machine": "Fixed Asset / Machine",
+    "category": "Category / Subsystem",
+    "fault": "Specific Fault",
+    "priority": "Priority",
+    "btn_open_wo": "Open Work Order",
+    "recent_wo": "Recent Work Orders",
+    "col_id": "ID",
+    "col_machine": "Machine",
+    "col_category": "Category",
+    "col_fault": "Fault",
+    "col_priority": "Priority",
+    "col_status": "Status",
+    "col_date": "Date"
+  },
+  "login": {
+    "title": "Welcome to Gulliver",
+    "subtitle": "Shop Floor Control",
+    "email_label": "Employee ID",
+    "password_label": "Password",
+    "remember_me": "Remember me",
+    "forgot_password": "Forgot your password?",
+    "btn_login": "Login",
+    "btn_logging_in": "Verifying...",
+    "error_empty": "Please fill in all fields",
+    "footer_text": "Plant Management System v2.4"
+  },
+  "user": {
+    "logout": "Logout",
+    "default_name": "Ing. Alejandro García",
+    "default_dept": "Operations",
+    "default_role": "Senior Plant Manager"
+  },
+  "filters": {
+    "location": "Location",
+    "businessUnit": "Business Unit",
+    "facility": "Facility",
+    "process": "Process"
+  },
+  "common": {
+    "spanish": "Spanish",
+    "english": "English"
+  }
+}
+

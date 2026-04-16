@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -7,28 +8,31 @@ import {
   ShieldCheck,
   Lightbulb,
   Truck,
-  ChevronLeft,
-  ChevronRight,
+  Menu,
   Factory,
 } from 'lucide-react';
+import SidebarUserSection from './SidebarUserSection';
 import type { ViewId } from '../types';
 
 interface SidebarProps {
   activeView: ViewId;
   onNavigate: (view: ViewId) => void;
+  user: { name: string; dept: string; role: string } | null;
+  onLogout: () => void;
 }
 
-const navItems: { id: ViewId; label: string; icon: React.ReactNode; section?: string }[] = [
-  { id: 'dashboard', label: 'Dashboard OEE', icon: <LayoutDashboard size={20} />, section: 'Producción' },
-  { id: 'hourByHour', label: 'Registro Operativo', icon: <ClipboardList size={20} /> },
-  { id: 'logistics', label: 'Logística (Plan)', icon: <Truck size={20} />, section: 'Planeación' },
-  { id: 'maintenance', label: 'Mantenimiento', icon: <Wrench size={20} />, section: 'Soporte' },
-  { id: 'quality', label: 'Calidad (Scrap)', icon: <ShieldCheck size={20} /> },
-  { id: 'pdca', label: 'Mejora Continua', icon: <Lightbulb size={20} /> },
+const navItems: { id: ViewId; translationKey: string; icon: React.ReactNode; sectionKey?: string }[] = [
+  { id: 'dashboard', translationKey: 'dashboard', icon: <LayoutDashboard size={20} />, sectionKey: 'section_production' },
+  { id: 'hourByHour', translationKey: 'hourByHour', icon: <ClipboardList size={20} /> },
+  { id: 'logistics', translationKey: 'logistics', icon: <Truck size={20} />, sectionKey: 'section_planning' },
+  { id: 'maintenance', translationKey: 'maintenance', icon: <Wrench size={20} />, sectionKey: 'section_support' },
+  { id: 'quality', translationKey: 'quality', icon: <ShieldCheck size={20} /> },
+  { id: 'pdca', translationKey: 'pdca', icon: <Lightbulb size={20} /> },
 ];
 
-export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
+export default function Sidebar({ activeView, onNavigate, user, onLogout }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const { t, i18n } = useTranslation();
 
   let lastSection = '';
 
@@ -50,7 +54,7 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
         flexShrink: 0,
       }}
     >
-      {/* Logo */}
+      {/* Logo Section */}
       <div
         style={{
           padding: collapsed ? '20px 0' : '20px 24px',
@@ -60,6 +64,7 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
           gap: 12,
           justifyContent: collapsed ? 'center' : 'flex-start',
           minHeight: 72,
+          flexDirection: collapsed ? 'column' : 'row'
         }}
       >
         <div
@@ -72,10 +77,12 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
+            overflow: 'hidden',
           }}
         >
-          <Factory size={20} color="#fff" />
+          <img src="/apg.png" width={36} height={36} alt="Logo" />
         </div>
+        
         <AnimatePresence>
           {!collapsed && (
             <motion.div
@@ -83,6 +90,7 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
+              style={{ flex: 1 }}
             >
               <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: 18, letterSpacing: -0.5 }}>
                 Gulliver
@@ -90,14 +98,45 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
             </motion.div>
           )}
         </AnimatePresence>
+
+        <motion.button
+          whileHover={{ background: 'rgba(255,255,255,0.08)' }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: 'var(--gv-sidebar-text)',
+            cursor: 'pointer',
+            padding: 6,
+            borderRadius: 8,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: collapsed ? 8 : 0
+          }}
+          title={collapsed ? t('common.expand') : t('common.collapse')}
+        >
+          <Menu size={20} />
+        </motion.button>
       </div>
+
+      {/* User Session Section */}
+      {user && (
+        <SidebarUserSection 
+          user={user} 
+          onLogout={onLogout} 
+          collapsed={collapsed} 
+        />
+      )}
 
       {/* Navigation */}
       <nav style={{ flex: 1, padding: '12px 12px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
         {navItems.map((item) => {
           const isActive = item.id === activeView;
-          const showSection = item.section && item.section !== lastSection;
-          if (item.section) lastSection = item.section;
+          const sectionLabel = item.sectionKey ? t(`sidebar.${item.sectionKey}`) : undefined;
+          const showSection = sectionLabel && sectionLabel !== lastSection;
+          if (sectionLabel) lastSection = sectionLabel;
 
           return (
             <div key={item.id}>
@@ -116,7 +155,7 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
                     userSelect: 'none',
                   }}
                 >
-                  {item.section}
+                  {sectionLabel}
                 </motion.div>
               )}
               {showSection && collapsed && (
@@ -145,7 +184,7 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
                   fontFamily: 'inherit',
                   position: 'relative',
                 }}
-                title={collapsed ? item.label : undefined}
+                title={collapsed ? t(`sidebar.${item.translationKey}`) : undefined}
               >
                 {isActive && (
                   <motion.div
@@ -173,7 +212,7 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
                       transition={{ duration: 0.2 }}
                       style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}
                     >
-                      {item.label}
+                      {t(`sidebar.${item.translationKey}`)}
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -183,28 +222,9 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
         })}
       </nav>
 
-      {/* Collapse toggle */}
-      <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            padding: '10px 0',
-            borderRadius: 8,
-            border: '1px solid rgba(255,255,255,0.08)',
-            background: 'rgba(255,255,255,0.03)',
-            color: 'var(--gv-sidebar-text)',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease',
-            fontFamily: 'inherit',
-          }}
-        >
-          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-        </button>
-      </div>
+
+
+
     </motion.aside>
   );
 }

@@ -1,27 +1,32 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Lightbulb, User, CalendarDays, Flag } from 'lucide-react';
 import { pdcaCards } from '../data/mockData';
 import type { PDCACard } from '../types';
 
-const columns = [
-  { key: 'plan', label: 'PLAN', color: '#3b82f6', gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)', description: 'Identificar y planificar' },
-  { key: 'do', label: 'DO', color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', description: 'Ejecutar acciones' },
-  { key: 'check', label: 'CHECK', color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', description: 'Verificar resultados' },
-  { key: 'act', label: 'ACT', color: '#10b981', gradient: 'linear-gradient(135deg, #10b981, #059669)', description: 'Estandarizar mejoras' },
-];
+export default function PDCAView() {
+  const { t } = useTranslation();
 
-const priorityColors = {
-  high: { bg: 'rgba(239, 68, 68, 0.1)', text: '#ef4444', border: 'rgba(239, 68, 68, 0.3)', label: 'Alta' },
-  medium: { bg: 'rgba(245, 158, 11, 0.1)', text: '#f59e0b', border: 'rgba(245, 158, 11, 0.3)', label: 'Media' },
-  low: { bg: 'rgba(16, 185, 129, 0.1)', text: '#10b981', border: 'rgba(16, 185, 129, 0.3)', label: 'Baja' },
-};
+  const columns = [
+    { key: 'plan', label: 'PLAN', color: '#3b82f6', gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)', description: t('pdca.plan_desc') },
+    { key: 'do', label: 'DO', color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', description: t('pdca.do_desc') },
+    { key: 'check', label: 'CHECK', color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', description: t('pdca.check_desc') },
+    { key: 'act', label: 'ACT', color: '#10b981', gradient: 'linear-gradient(135deg, #10b981, #059669)', description: t('pdca.act_desc') },
+  ];
 
-function PDCACardItem({ card, colIndex, cardIndex }: { card: PDCACard; colIndex: number; cardIndex: number }) {
-  const priority = priorityColors[card.priority];
+  const priorityColors = {
+    high: { bg: 'rgba(239, 68, 68, 0.1)', text: '#ef4444', border: 'rgba(239, 68, 68, 0.3)', label: t('pdca.high') },
+    medium: { bg: 'rgba(245, 158, 11, 0.1)', text: '#f59e0b', border: 'rgba(245, 158, 11, 0.3)', label: t('pdca.medium') },
+    low: { bg: 'rgba(16, 185, 129, 0.1)', text: '#10b981', border: 'rgba(16, 185, 129, 0.3)', label: t('pdca.low') },
+  };
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 15 }}
+  function PDCACardItem({ card, colIndex, cardIndex }: { card: PDCACard; colIndex: number; cardIndex: number }) {
+    // We get priority inside the component where translation hook is accessible
+    const priority = priorityColors[card.priority as keyof typeof priorityColors];
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.15 * cardIndex + 0.1 * colIndex }}
       whileHover={{
@@ -105,7 +110,6 @@ function PDCACardItem({ card, colIndex, cardIndex }: { card: PDCACard; colIndex:
   );
 }
 
-export default function PDCAView() {
   return (
     <motion.div
       initial={{ opacity: 0, x: 30 }}
@@ -131,11 +135,11 @@ export default function PDCAView() {
             <Lightbulb size={18} color="#8b5cf6" />
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gv-text-heading)', margin: 0, letterSpacing: -0.5 }}>
-            PDCA Activities — Mejora Continua
+            {t('pdca.title')}
           </h1>
         </div>
         <p style={{ fontSize: 13, color: 'var(--gv-text-muted)', margin: 0, paddingLeft: 46 }}>
-          Tablero de seguimiento de actividades de mejora continua IATF 16949
+          {t('pdca.subtitle')}
         </p>
       </div>
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Truck, Plus, Trash2, ChevronDown, Save, CheckCircle2 } from 'lucide-react';
 import type { PlanRecord } from '../types';
 
@@ -25,6 +26,7 @@ interface LogisticsViewProps {
 }
 
 export default function LogisticsView({ planRecords, onUpdatePlanRecords }: LogisticsViewProps) {
+  const { t } = useTranslation();
   const [showSaved, setShowSaved] = useState(false);
 
   const addRow = () => {
@@ -111,17 +113,17 @@ export default function LogisticsView({ planRecords, onUpdatePlanRecords }: Logi
               <Truck size={18} color="#06b6d4" />
             </div>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gv-text-heading)', margin: 0, letterSpacing: -0.5 }}>
-              Logística — Master Schedule
+              {t('logistics.title')}
             </h1>
           </div>
           <p style={{ fontSize: 13, color: 'var(--gv-text-muted)', margin: 0, paddingLeft: 46 }}>
-            Los targets definidos aquí alimentan automáticamente la vista Hora x Hora
+            {t('logistics.subtitle')}
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <div className="glass-card" style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--gv-text-muted)', textTransform: 'uppercase' }}>Target Turno (8h)</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--gv-text-muted)', textTransform: 'uppercase' }}>{t('logistics.target_shift')}</div>
               <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--gv-primary)', lineHeight: 1 }}>{totalTarget} pzs</div>
             </div>
           </div>
@@ -143,7 +145,7 @@ export default function LogisticsView({ planRecords, onUpdatePlanRecords }: Logi
             }}
           >
             <CheckCircle2 size={18} />
-            Planeación guardada — Targets inyectados a Registro Operativo
+            {t('logistics.saved_msg')}
           </motion.div>
         )}
       </AnimatePresence>
@@ -161,12 +163,12 @@ export default function LogisticsView({ planRecords, onUpdatePlanRecords }: Logi
             <thead>
               <tr>
                 <th style={{ ...thStyle, width: 50 }}>#</th>
-                <th style={thStyle}>Línea</th>
-                <th style={thStyle}>Turno</th>
-                <th style={thStyle}>Horario</th>
-                <th style={thStyle}>No. Parte (SKU)</th>
-                <th style={{ ...thStyle, width: 130 }}>Target / Hora</th>
-                <th style={{ ...thStyle, width: 130 }}>Target Turno (8h)</th>
+                <th style={thStyle}>{t('logistics.col_line')}</th>
+                <th style={thStyle}>{t('logistics.col_shift')}</th>
+                <th style={thStyle}>{t('logistics.col_time')}</th>
+                <th style={thStyle}>{t('logistics.col_sku')}</th>
+                <th style={{ ...thStyle, width: 130 }}>{t('logistics.col_target_hr')}</th>
+                <th style={{ ...thStyle, width: 130 }}>{t('logistics.col_target_shift')}</th>
                 <th style={{ ...thStyle, width: 60 }}></th>
               </tr>
             </thead>
@@ -302,7 +304,7 @@ export default function LogisticsView({ planRecords, onUpdatePlanRecords }: Logi
               transition: 'all 0.2s ease',
             }}
           >
-            <Plus size={16} /> Agregar Línea
+            <Plus size={16} /> {t('logistics.btn_add_line')}
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -318,7 +320,7 @@ export default function LogisticsView({ planRecords, onUpdatePlanRecords }: Logi
               transition: 'all 0.2s ease',
             }}
           >
-            <Save size={16} /> Guardar y Publicar Targets
+            <Save size={16} /> {t('logistics.btn_save_publish')}
           </motion.button>
         </div>
       </motion.div>
@@ -338,10 +340,8 @@ export default function LogisticsView({ planRecords, onUpdatePlanRecords }: Logi
           lineHeight: 1.6,
         }}
       >
-        <strong style={{ color: 'var(--gv-primary)' }}>💡 Integración automática:</strong>{' '}
-        Los valores de <strong>Target / Hora</strong> definidos en este módulo se inyectan directamente como 
-        el target en la vista <strong>Registro Operativo (Hora x Hora)</strong>. El primer registro de este 
-        módulo define el target por defecto del turno actual.
+        <strong style={{ color: 'var(--gv-primary)' }}>💡 {t('logistics.info_title')}</strong>{' '}
+        {t('logistics.info_desc')}
       </motion.div>
     </motion.div>
   );

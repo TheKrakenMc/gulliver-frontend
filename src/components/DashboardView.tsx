@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Activity, BarChart3, Calendar, Gauge } from 'lucide-react';
 import KPICard from './KPICard';
 import OEEChart from './OEEChart';
@@ -7,12 +8,13 @@ import type { FilterState } from '../types';
 
 /* ─── Waterfall / Bridge Chart ─── */
 function BridgeChart() {
+  const { t } = useTranslation();
   const segments = [
-    { label: 'Capacidad Ideal', value: 100, color: '#3b82f6', type: 'start' as const },
-    { label: 'Pérdida Disponibilidad', value: -12, color: '#ef4444', type: 'loss' as const },
-    { label: 'Pérdida Rendimiento', value: -8, color: '#f59e0b', type: 'loss' as const },
-    { label: 'Pérdida Calidad', value: -7.6, color: '#8b5cf6', type: 'loss' as const },
-    { label: 'OEE Final', value: 72.4, color: '#10b981', type: 'end' as const },
+    { label: t('dashboard.capacity_ideal'), value: 100, color: '#3b82f6', type: 'start' as const },
+    { label: t('dashboard.loss_availability'), value: -12, color: '#ef4444', type: 'loss' as const },
+    { label: t('dashboard.loss_performance'), value: -8, color: '#f59e0b', type: 'loss' as const },
+    { label: t('dashboard.loss_quality'), value: -7.6, color: '#8b5cf6', type: 'loss' as const },
+    { label: t('dashboard.final_oee'), value: 72.4, color: '#10b981', type: 'end' as const },
   ];
 
   let runningTotal = 100;
@@ -28,10 +30,10 @@ function BridgeChart() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
           <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--gv-text-heading)', margin: 0 }}>
-            Bridge Chart — Caída de Eficiencia
+            {t('dashboard.bridge_title')}
           </h3>
           <p style={{ fontSize: 13, color: 'var(--gv-text-muted)', margin: '4px 0 0' }}>
-            Desglose de pérdidas: 100% → OEE Final
+            {t('dashboard.bridge_desc')}
           </p>
         </div>
       </div>
@@ -39,7 +41,7 @@ function BridgeChart() {
       {/* Chart area */}
       <div style={{
         display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around',
-        height: 240, position: 'relative', paddingBottom: 40,
+        height: 240, position: 'relative', paddingBottom: 40, top: 60
       }}>
         {/* Grid lines */}
         {[0, 25, 50, 75, 100].map((val) => (
@@ -134,9 +136,9 @@ function BridgeChart() {
         color: 'var(--gv-text-muted)',
       }}>
         {[
-          { label: 'Disponibilidad', value: '88.0%', color: '#ef4444' },
-          { label: 'Rendimiento', value: '92.0%', color: '#f59e0b' },
-          { label: 'Calidad', value: '89.4%', color: '#8b5cf6' },
+          { label: t('dashboard.availability'), value: '88.0%', color: '#ef4444' },
+          { label: t('dashboard.performance'), value: '92.0%', color: '#f59e0b' },
+          { label: t('dashboard.quality'), value: '89.4%', color: '#8b5cf6' },
         ].map((item) => (
           <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div style={{ width: 10, height: 10, borderRadius: 3, background: item.color }} />
@@ -150,10 +152,11 @@ function BridgeChart() {
 
 /* ─── Traffic Light KPI ─── */
 function TrafficLightCard({ label, value, unit }: { label: string; value: number; unit: string }) {
+  const { t } = useTranslation();
   const getColor = (v: number) => {
-    if (v < 75) return { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', label: 'ROJO' };
-    if (v < 85) return { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', label: 'AMARILLO' };
-    return { color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', label: 'VERDE' };
+    if (v < 75) return { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', label: t('dashboard.red') };
+    if (v < 85) return { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', label: t('dashboard.yellow') };
+    return { color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', label: t('dashboard.green') };
   };
   const tc = getColor(value);
 
@@ -219,6 +222,8 @@ interface DashboardViewProps {
 }
 
 export default function DashboardView({ filters }: DashboardViewProps) {
+  const { t, i18n } = useTranslation();
+  
   return (
     <motion.div
       initial={{ opacity: 0, x: 30 }}
@@ -241,7 +246,7 @@ export default function DashboardView({ filters }: DashboardViewProps) {
               <BarChart3 size={18} color="var(--gv-primary)" />
             </div>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gv-text-heading)', margin: 0, letterSpacing: -0.5 }}>
-              Executive Scorecard
+              {t('dashboard.executive_scorecard')}
             </h1>
           </div>
           <p style={{ fontSize: 13, color: 'var(--gv-text-muted)', margin: 0, paddingLeft: 46 }}>
@@ -255,7 +260,7 @@ export default function DashboardView({ filters }: DashboardViewProps) {
             fontSize: 12, color: 'var(--gv-text-muted)', fontWeight: 500,
           }}>
             <Calendar size={14} />
-            <span>Turno Actual — {new Date().toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+            <span>{t('dashboard.current_shift')} — {new Date().toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-MX', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
           </div>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8,
@@ -263,7 +268,7 @@ export default function DashboardView({ filters }: DashboardViewProps) {
             fontSize: 12, color: '#10b981', fontWeight: 600,
           }}>
             <Activity size={14} />
-            <span>En Producción</span>
+            <span>{t('dashboard.in_production')}</span>
           </div>
         </div>
       </div>
@@ -282,13 +287,13 @@ export default function DashboardView({ filters }: DashboardViewProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
           <Gauge size={16} color="var(--gv-primary)" />
           <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gv-text-heading)', margin: 0 }}>
-            Semáforo de Desempeño
+            {t('dashboard.performance_traffic_light')}
           </h3>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
           <TrafficLightCard label="OEE" value={72.4} unit="%" />
-          <TrafficLightCard label="Disponibilidad" value={88.0} unit="%" />
-          <TrafficLightCard label="Calidad" value={89.4} unit="%" />
+          <TrafficLightCard label={t('dashboard.availability')} value={88.0} unit="%" />
+          <TrafficLightCard label={t('dashboard.quality')} value={89.4} unit="%" />
         </div>
       </div>
 

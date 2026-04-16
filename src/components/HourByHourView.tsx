@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   ClipboardList,
   Clock,
@@ -383,6 +384,7 @@ function AnalysisBadge({ fault, onClick }: { fault: FaultRecord; onClick: () => 
 /* ════════════════════════════════════════════════════ */
 
 export default function HourByHourView({ filters, planTarget }: HourByHourViewProps) {
+  const { t } = useTranslation();
   /* ── Hour Records ── */
   const [records, setRecords] = useState<HourRecord[]>(
     Array.from({ length: 4 }, (_, i) => ({
@@ -541,18 +543,18 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
                 <ClipboardList size={18} color="#f59e0b" />
               </div>
               <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gv-text-heading)', margin: 0, letterSpacing: -0.5 }}>
-                Registro Operativo — Hora x Hora
+                {t('hourByHour.title')}
               </h1>
             </div>
             <p style={{ fontSize: 13, color: 'var(--gv-text-muted)', margin: 0, paddingLeft: 46 }}>
-              {filters.location} › {filters.process} — Turno 1 (06:00 – 14:00) · Target: <strong style={{ color: 'var(--gv-primary)' }}>{planTarget} pzs/hr</strong>
+              {filters.location} › {filters.process} — {t('hourByHour.shift_target')} <strong style={{ color: 'var(--gv-primary)' }}>{planTarget} pzs/hr</strong>
             </p>
           </div>
           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => setValidationPanel((v) => !v)}
             style={{ padding: '10px 18px', borderRadius: 10, border: pendingValidation > 0 ? '1px solid rgba(245,158,11,0.4)' : '1px solid var(--gv-border)', background: pendingValidation > 0 ? 'rgba(245,158,11,0.08)' : 'var(--gv-surface)', color: pendingValidation > 0 ? '#f59e0b' : 'var(--gv-text)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 8, transition: 'all 0.2s ease' }}
           >
             <BadgeCheck size={15} />
-            Panel de Validación
+            {t('hourByHour.validation_panel')}
             {pendingValidation > 0 && (
               <span style={{ width: 20, height: 20, borderRadius: '50%', background: '#f59e0b', color: '#fff', fontSize: 11, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{pendingValidation}</span>
             )}
@@ -562,12 +564,12 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
         {/* ── KPI Cards ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14 }}>
           {[
-            { label: 'Total OK', value: totals.actualOK, icon: <CheckCircle2 size={16} />, color: '#10b981' },
-            { label: 'Scrap', value: `${totals.scrap} (${allScrap.length} def.)`, icon: <AlertTriangle size={16} />, color: '#ef4444' },
-            { label: 'Downtime', value: `${totals.downtime} min`, icon: <Clock size={16} />, color: '#f59e0b' },
-            { label: 'Eficiencia', value: `${efficiency}%`, icon: <ClipboardList size={16} />, color: parseFloat(efficiency) >= 85 ? '#10b981' : parseFloat(efficiency) >= 75 ? '#f59e0b' : '#ef4444' },
-            { label: 'Fallas', value: allFaults.length, icon: <Wrench size={16} />, color: allFaults.length > 0 ? '#ef4444' : '#10b981' },
-            { label: 'Scrap Rate', value: `${scrapRate}%`, icon: <Layers size={16} />, color: parseFloat(scrapRate) > 2.5 ? '#ef4444' : '#10b981' },
+            { label: t('hourByHour.total_ok'), value: totals.actualOK, icon: <CheckCircle2 size={16} />, color: '#10b981' },
+            { label: t('hourByHour.scrap'), value: `${totals.scrap} (${allScrap.length} def.)`, icon: <AlertTriangle size={16} />, color: '#ef4444' },
+            { label: t('hourByHour.downtime'), value: `${totals.downtime} min`, icon: <Clock size={16} />, color: '#f59e0b' },
+            { label: t('hourByHour.efficiency'), value: `${efficiency}%`, icon: <ClipboardList size={16} />, color: parseFloat(efficiency) >= 85 ? '#10b981' : parseFloat(efficiency) >= 75 ? '#f59e0b' : '#ef4444' },
+            { label: t('hourByHour.faults'), value: allFaults.length, icon: <Wrench size={16} />, color: allFaults.length > 0 ? '#ef4444' : '#10b981' },
+            { label: t('hourByHour.scrap_rate'), value: `${scrapRate}%`, icon: <Layers size={16} />, color: parseFloat(scrapRate) > 2.5 ? '#ef4444' : '#10b981' },
           ].map((item) => (
             <motion.div key={item.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="glass-card"
               style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}
@@ -608,9 +610,9 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
                   <th style={{ ...thStyle, width: 70 }}>Scrap</th>
                   <th style={{ ...thStyle, width: 90 }}>DT (min)</th>
                   <th style={{ ...thStyle, width: 80 }}>OEE Loss</th>
-                  <th style={{ ...thStyle, textAlign: 'left', minWidth: 130 }}>Comentarios</th>
-                  <th style={{ ...thStyle, minWidth: 260, background: 'rgba(239,68,68,0.05)', color: '#ef4444', borderLeft: '2px solid rgba(239,68,68,0.15)' }}>Fallas Registradas</th>
-                  <th style={{ ...thStyle, minWidth: 260, background: 'rgba(139,92,246,0.05)', color: '#8b5cf6', borderLeft: '2px solid rgba(139,92,246,0.15)' }}>Scrap Registrado</th>
+                  <th style={{ ...thStyle, textAlign: 'left', minWidth: 130 }}>{t('hourByHour.comments')}</th>
+                  <th style={{ ...thStyle, minWidth: 260, background: 'rgba(239,68,68,0.05)', color: '#ef4444', borderLeft: '2px solid rgba(239,68,68,0.15)' }}>{t('hourByHour.registered_faults')}</th>
+                  <th style={{ ...thStyle, minWidth: 260, background: 'rgba(139,92,246,0.05)', color: '#8b5cf6', borderLeft: '2px solid rgba(139,92,246,0.15)' }}>{t('hourByHour.registered_scrap')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -692,7 +694,7 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
                           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} onClick={() => setFaultModal(index)}
                             style={{ padding: '5px 10px', borderRadius: 6, border: '1px dashed rgba(239,68,68,0.35)', background: 'transparent', color: 'rgba(239,68,68,0.6)', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 5, transition: 'all 0.2s ease', alignSelf: 'flex-start' }}
                           >
-                            <Plus size={11} /> Registrar falla
+                            <Plus size={11} /> {t('hourByHour.register_fault')}
                           </motion.button>
                         </div>
                       </td>
@@ -720,7 +722,7 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
                           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} onClick={() => setScrapModal(index)}
                             style={{ padding: '5px 10px', borderRadius: 6, border: '1px dashed rgba(139,92,246,0.35)', background: 'transparent', color: 'rgba(139,92,246,0.6)', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 5, transition: 'all 0.2s ease', alignSelf: 'flex-start' }}
                           >
-                            <Plus size={11} /> Registrar defecto
+                            <Plus size={11} /> {t('hourByHour.register_defect')}
                           </motion.button>
                         </div>
                       </td>
@@ -767,7 +769,7 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} onClick={addRow} disabled={records.length >= 12}
               style={{ padding: '9px 18px', borderRadius: 8, border: '1px dashed var(--gv-border)', background: 'transparent', color: records.length >= 12 ? 'var(--gv-text-muted)' : 'var(--gv-primary)', fontSize: 12, fontWeight: 600, cursor: records.length >= 12 ? 'not-allowed' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s ease', opacity: records.length >= 12 ? 0.4 : 1 }}
             >
-              <Plus size={15} /> Añadir Fila de Hora ({records.length}/12)
+              <Plus size={15} /> {t('hourByHour.add_row')} ({records.length}/12)
             </motion.button>
           </div>
         </motion.div>

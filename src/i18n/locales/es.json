@@ -1,0 +1,130 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard OEE",
+    "hourByHour": "Registro Operativo",
+    "logistics": "Logística (Plan)",
+    "maintenance": "Mantenimiento",
+    "quality": "Calidad (Scrap)",
+    "pdca": "Mejora Continua",
+    "section_production": "Producción",
+    "section_planning": "Planeación",
+    "section_support": "Soporte"
+  },
+  "dashboard": {
+    "capacity_ideal": "Capacidad Ideal",
+    "loss_availability": "Pérdida Disponibilidad",
+    "loss_performance": "Pérdida Rendimiento",
+    "loss_quality": "Pérdida Calidad",
+    "final_oee": "OEE Final",
+    "bridge_title": "Bridge Chart — Caída de Eficiencia",
+    "bridge_desc": "Desglose de pérdidas: 100% → OEE Final",
+    "availability": "Disponibilidad",
+    "performance": "Rendimiento",
+    "quality": "Calidad",
+    "red": "ROJO",
+    "yellow": "AMARILLO",
+    "green": "VERDE",
+    "executive_scorecard": "Executive Scorecard",
+    "current_shift": "Turno Actual",
+    "in_production": "En Producción",
+    "performance_traffic_light": "Semáforo de Desempeño"
+  },
+  "hourByHour": {
+    "title": "Registro Operativo — Hora x Hora",
+    "shift_target": "Turno 1 (06:00 – 14:00) · Target:",
+    "validation_panel": "Panel de Validación",
+    "total_ok": "Total OK",
+    "scrap": "Scrap",
+    "downtime": "Downtime",
+    "efficiency": "Eficiencia",
+    "faults": "Fallas",
+    "scrap_rate": "Scrap Rate",
+    "add_row": "Añadir Fila de Hora",
+    "registered_faults": "Fallas Registradas",
+    "registered_scrap": "Scrap Registrado",
+    "register_fault": "Registrar falla",
+    "register_defect": "Registrar defecto",
+    "comments": "Comentarios"
+  },
+  "quality": {
+    "title": "Calidad — Scrap por Tecnología",
+    "subtitle": "Registro de defectos por botones — sin entrada de texto libre",
+    "total_scrap": "Total Scrap",
+    "reset": "Reset"
+  },
+  "pdca": {
+    "title": "PDCA Activities — Mejora Continua",
+    "subtitle": "Tablero de seguimiento de actividades de mejora continua",
+    "plan_desc": "Identificar y planificar",
+    "do_desc": "Ejecutar acciones",
+    "check_desc": "Verificar resultados",
+    "act_desc": "Estandarizar mejoras",
+    "high": "Alta",
+    "medium": "Media",
+    "low": "Baja"
+  },
+  "logistics": {
+    "title": "Logística — Master Schedule",
+    "subtitle": "Los targets definidos aquí alimentan automáticamente la vista Hora x Hora",
+    "target_shift": "Target Turno (8h)",
+    "saved_msg": "Planeación guardada — Targets inyectados a Registro Operativo",
+    "col_line": "Línea",
+    "col_shift": "Turno",
+    "col_time": "Horario",
+    "col_sku": "No. Parte (SKU)",
+    "col_target_hr": "Target / Hora",
+    "col_target_shift": "Target Turno (8h)",
+    "btn_add_line": "Agregar Línea",
+    "btn_save_publish": "Guardar y Publicar Targets",
+    "info_title": "Integración automática:",
+    "info_desc": "Los valores de Target / Hora definidos en este módulo se inyectan directamente como el target en la vista Registro Operativo (Hora x Hora). El primer registro de este módulo define el target por defecto del turno actual."
+  },
+  "maintenance": {
+    "title": "Mantenimiento — Control de Fallas",
+    "subtitle": "Selección jerárquica: Máquina → Categoría → Falla específica (sin texto libre)",
+    "success_msg": "Orden de Trabajo creada exitosamente",
+    "new_wo": "Nueva Orden de Trabajo",
+    "machine": "Activo Fijo / Máquina",
+    "category": "Categoría / Subsistema",
+    "fault": "Falla Específica",
+    "priority": "Prioridad",
+    "btn_open_wo": "Abrir Orden de Trabajo",
+    "recent_wo": "Órdenes de Trabajo Recientes",
+    "col_id": "ID",
+    "col_machine": "Máquina",
+    "col_category": "Categoría",
+    "col_fault": "Falla",
+    "col_priority": "Prioridad",
+    "col_status": "Status",
+    "col_date": "Fecha"
+  },
+  "login": {
+    "title": "Bienvenido a Gulliver",
+    "subtitle": "Control de producción",
+    "email_label": "Número de empleado/control",
+    "password_label": "Contraseña",
+    "remember_me": "Recordar sesión",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "btn_login": "Iniciar Sesión",
+    "btn_logging_in": "Verificando...",
+    "error_empty": "Por favor completa todos los campos",
+    "footer_text": "Sistema de Gestión de Planta v2.4"
+  },
+  "user": {
+    "logout": "Cerrar Sesión",
+    "default_name": "Ing. Alejandro García",
+    "default_dept": "Operaciones",
+    "default_role": "Senior Plant Manager"
+  },
+  "filters": {
+    "location": "Ubicación",
+    "businessUnit": "Unidad de Negocio",
+    "facility": "Planta",
+    "process": "Proceso"
+  },
+  "common": {
+    "spanish": "Español",
+    "english": "Inglés"
+  }
+}
+

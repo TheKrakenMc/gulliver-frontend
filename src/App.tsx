@@ -8,6 +8,7 @@ import MaintenanceView from './components/MaintenanceView';
 import QualityView from './components/QualityView';
 import LogisticsView from './components/LogisticsView';
 import PDCAView from './components/PDCAView';
+import LoginView from './components/LoginView';
 import type { ViewId, FilterState, PlanRecord } from './types';
 import { filterOptions } from './data/mockData';
 
@@ -17,6 +18,8 @@ const defaultPlanRecords: PlanRecord[] = [
   { id_plan: 'PLAN-TN-01', linea: 'INJ-1', turno: 'Nocturno', sku: 'CONSOLE-004', target_hr: 38 },
 ];
 
+const AUTH_STORAGE_KEY = 'gulliver_auth_session';
+
 export default function App() {
   const [activeView, setActiveView] = useState<ViewId>('dashboard');
   const [darkMode, setDarkMode] = useState(true);
@@ -25,6 +28,14 @@ export default function App() {
     businessUnit: filterOptions.businessUnits[2],
     facility: filterOptions.facilities[3],
     process: filterOptions.processes[0],
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem(AUTH_STORAGE_KEY) !== null;
+  });
+  const [user, setUser] = useState<{ name: string; dept: string; role: string } | null>(() => {
+    const savedUser = localStorage.getItem(AUTH_STORAGE_KEY);
+    return savedUser ? JSON.parse(savedUser) : null;
   });
 
   // Shared state: Logistics planning → HourByHour target
@@ -41,9 +52,25 @@ export default function App() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleLogin = (userData: { name: string; dept: string; role: string }) => {
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
+    setUser(userData);
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    setIsAuthenticated(false);
+    setUser(null);
+  };
+
+  if (!isAuthenticated) {
+    return <LoginView onLogin={handleLogin} />;
+  }
+
   return (
     <>
-      <Sidebar activeView={activeView} onNavigate={setActiveView} />
+      <Sidebar activeView={activeView} onNavigate={setActiveView} user={user} onLogout={handleLogout} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', overflow: 'hidden' }}>
         <GlobalFilterBar
           filters={filters}

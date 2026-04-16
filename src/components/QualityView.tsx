@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Plus, Minus, RotateCcw, AlertTriangle } from 'lucide-react';
 import scrapCatalog from '../utils/Failures_SCRAP.json';
 import type { ScrapCatalog, ScrapDefecto } from '../types';
@@ -8,6 +9,7 @@ const catalog = scrapCatalog as ScrapCatalog;
 const technologies = Object.keys(catalog);
 
 export default function QualityView() {
+  const { t } = useTranslation();
   const [activeTech, setActiveTech] = useState<string>(technologies[0]);
   const [defectCounts, setDefectCounts] = useState<Record<string, number>>({});
 
@@ -65,18 +67,18 @@ export default function QualityView() {
               <ShieldCheck size={18} color="#ef4444" />
             </div>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gv-text-heading)', margin: 0, letterSpacing: -0.5 }}>
-              Calidad — Scrap por Tecnología
+              {t('quality.title')}
             </h1>
           </div>
           <p style={{ fontSize: 13, color: 'var(--gv-text-muted)', margin: 0, paddingLeft: 46 }}>
-            Registro de defectos por botones — sin entrada de texto libre
+            {t('quality.subtitle')}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div className="glass-card" style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <AlertTriangle size={16} color={totalScrap > 10 ? '#ef4444' : totalScrap > 5 ? '#f59e0b' : '#10b981'} />
             <div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--gv-text-muted)', textTransform: 'uppercase' }}>Total Scrap</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--gv-text-muted)', textTransform: 'uppercase' }}>{t('quality.total_scrap')}</div>
               <div style={{ fontSize: 22, fontWeight: 800, color: totalScrap > 10 ? '#ef4444' : totalScrap > 5 ? '#f59e0b' : '#10b981', lineHeight: 1 }}>{totalScrap}</div>
             </div>
           </div>
@@ -89,7 +91,7 @@ export default function QualityView() {
               transition: 'all 0.2s ease',
             }}
           >
-            <RotateCcw size={14} /> Reset
+            <RotateCcw size={14} /> {t('quality.reset')}
           </button>
         </div>
       </div>
