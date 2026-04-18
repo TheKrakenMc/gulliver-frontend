@@ -42,13 +42,13 @@ export const kpiData: KPIData[] = [
     trend: 'up',
     status: 'critical',
   },
-  {
-    label: 'Financial Loss YTD',
-    value: '$142,580',
-    unit: 'USD',
-    trend: 'up',
-    status: 'critical',
-  },
+  // {
+  //   label: 'Financial Loss YTD',
+  //   value: '$142,580',
+  //   unit: 'USD',
+  //   trend: 'up',
+  //   status: 'critical',
+  // },
 ];
 
 /* ─── OEE by Line ─── */
