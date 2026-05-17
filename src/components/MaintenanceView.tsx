@@ -202,7 +202,7 @@ export default function MaintenanceView() {
           {t('maintenance.new_wo')}
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Step 1: Machine */}
           <div>
             <div style={labelStyle}>
@@ -304,7 +304,7 @@ export default function MaintenanceView() {
         </div>
 
         {/* Priority + Create button */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 20, marginTop: 24 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: 20, marginTop: 24 }}>
           <div style={{ width: 200 }}>
             <div style={labelStyle}>
               <AlertCircle size={12} />

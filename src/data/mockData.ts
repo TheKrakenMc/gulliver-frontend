@@ -1,8 +1,8 @@
-import type { HourRecord, PDCACard, KPIData, OEELine } from '../types';
+import type { HourRecord, PDCACard, KPIData, OEELine, PlanRecord } from '../types';
 
 /* ─── Filter Options ─── */
 export const filterOptions = {
-  locations: ['Planta Puebla', 'Planta Querétaro', 'Planta Monterrey'],
+  locations: ['Planta Puebla', 'Planta Pachuca', 'Planta Saltillo'],
   businessUnits: ['Unidad 1', 'Unidad 2', 'Unidad 3'],
   facilities: ['Nave 1', 'Nave 2', 'Nave 3', 'Nave 4'],
   processes: ['Inner Dash', 'Outer Dash', 'Door Panel', 'Console', 'IP Carrier'],
@@ -42,13 +42,6 @@ export const kpiData: KPIData[] = [
     trend: 'up',
     status: 'critical',
   },
-  // {
-  //   label: 'Financial Loss YTD',
-  //   value: '$142,580',
-  //   unit: 'USD',
-  //   trend: 'up',
-  //   status: 'critical',
-  // },
 ];
 
 /* ─── OEE by Line ─── */
@@ -71,6 +64,7 @@ export const defaultHourRecords: HourRecord[] = Array.from({ length: 8 }, (_, i)
   scrap: 0,
   downtime: 0,
   comments: '',
+  oeeLoss: 0,
 }));
 
 /* ─── PDCA Cards ─── */
@@ -156,3 +150,59 @@ export const pdcaCards: Record<string, PDCACard[]> = {
     },
   ],
 };
+
+/* ─── Plan History Mock Data ─── */
+export const mockPlanHistory: PlanRecord[] = [
+  {
+    id_plan: 'PLAN-HIST-01',
+    fecha: new Date().toISOString().split('T')[0],
+    planta: filterOptions.facilities[0],
+    linea: 'HMP-1',
+    turno: 'Matutino',
+    slot: { start: '06:00', end: '14:00' },
+    sku: 'DASH-INNER-001',
+    target_hr: 45,
+    creado_por: 'Ing. García',
+    created_at: new Date(Date.now() - 3600000).toISOString(),
+    status: 'published'
+  },
+  {
+    id_plan: 'PLAN-HIST-02',
+    fecha: new Date().toISOString().split('T')[0],
+    planta: filterOptions.facilities[0],
+    linea: 'HMP-1',
+    turno: 'Vespertino',
+    slot: { start: '14:00', end: '22:00' },
+    sku: 'DASH-OUTER-002',
+    target_hr: 40,
+    creado_por: 'Ing. López',
+    created_at: new Date(Date.now() - 7200000).toISOString(),
+    status: 'draft'
+  },
+  {
+    id_plan: 'PLAN-HIST-03',
+    fecha: new Date(Date.now() - 86400000).toISOString().split('T')[0], // Yesterday
+    planta: filterOptions.facilities[0],
+    linea: 'INJ-1',
+    turno: '12x12_Dia',
+    slot: { start: '06:00', end: '18:00' },
+    sku: 'CONSOLE-004',
+    target_hr: 60,
+    creado_por: 'Ing. Martínez',
+    created_at: new Date(Date.now() - 86400000 * 1.5).toISOString(),
+    status: 'published'
+  },
+  {
+    id_plan: 'PLAN-HIST-04',
+    fecha: new Date(Date.now() - 86400000).toISOString().split('T')[0], // Yesterday
+    planta: filterOptions.facilities[1], // Different facility
+    linea: 'ASM-1',
+    turno: 'Mixto',
+    slot: { start: '09:00', end: '15:00' },
+    sku: 'DOOR-PNL-003',
+    target_hr: 50,
+    creado_por: 'Ing. García',
+    created_at: new Date(Date.now() - 86400000 * 1.1).toISOString(),
+    status: 'cancelled'
+  }
+];

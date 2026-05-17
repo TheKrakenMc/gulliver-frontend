@@ -144,10 +144,7 @@ export default function PDCAView() {
       </div>
 
       {/* PDCA Board */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 20,
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" style={{
         flex: 1,
         minHeight: 0,
       }}>

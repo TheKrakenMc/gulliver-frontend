@@ -274,9 +274,7 @@ export default function DashboardView({ filters }: DashboardViewProps) {
       </div>
 
       {/* KPI Cards */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20,
-      }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {kpiData.map((kpi, index) => (
           <KPICard key={kpi.label} data={kpi} index={index} />
         ))}
@@ -290,7 +288,7 @@ export default function DashboardView({ filters }: DashboardViewProps) {
             {t('dashboard.performance_traffic_light')}
           </h3>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <TrafficLightCard label="OEE" value={72.4} unit="%" />
           <TrafficLightCard label={t('dashboard.availability')} value={88.0} unit="%" />
           <TrafficLightCard label={t('dashboard.quality')} value={89.4} unit="%" />

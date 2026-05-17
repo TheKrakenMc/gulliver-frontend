@@ -9,30 +9,29 @@ import {
   Lightbulb,
   Truck,
   Menu,
-  Factory,
+  Cog,
 } from 'lucide-react';
-import SidebarUserSection from './SidebarUserSection';
+import { useGlobalStore } from '../store/globalStore';
 import type { ViewId } from '../types';
 
 interface SidebarProps {
   activeView: ViewId;
   onNavigate: (view: ViewId) => void;
-  user: { name: string; dept: string; role: string } | null;
-  onLogout: () => void;
 }
 
 const navItems: { id: ViewId; translationKey: string; icon: React.ReactNode; sectionKey?: string }[] = [
   { id: 'dashboard', translationKey: 'dashboard', icon: <LayoutDashboard size={20} />, sectionKey: 'section_production' },
   { id: 'hourByHour', translationKey: 'hourByHour', icon: <ClipboardList size={20} /> },
   { id: 'logistics', translationKey: 'logistics', icon: <Truck size={20} />, sectionKey: 'section_planning' },
+  { id: 'engineering', translationKey: 'engineering', icon: <Cog size={20} />, sectionKey: 'section_engineering' },
   { id: 'maintenance', translationKey: 'maintenance', icon: <Wrench size={20} />, sectionKey: 'section_support' },
   { id: 'quality', translationKey: 'quality', icon: <ShieldCheck size={20} /> },
   { id: 'pdca', translationKey: 'pdca', icon: <Lightbulb size={20} /> },
 ];
 
-export default function Sidebar({ activeView, onNavigate, user, onLogout }: SidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
-  const { t, i18n } = useTranslation();
+export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
+  const { sidebarCollapsed: collapsed, toggleSidebar } = useGlobalStore();
+  const { t } = useTranslation();
 
   let lastSection = '';
 
@@ -102,7 +101,7 @@ export default function Sidebar({ activeView, onNavigate, user, onLogout }: Side
         <motion.button
           whileHover={{ background: 'rgba(255,255,255,0.08)' }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggleSidebar}
           style={{
             background: 'transparent',
             border: 'none',
@@ -121,14 +120,7 @@ export default function Sidebar({ activeView, onNavigate, user, onLogout }: Side
         </motion.button>
       </div>
 
-      {/* User Session Section */}
-      {user && (
-        <SidebarUserSection 
-          user={user} 
-          onLogout={onLogout} 
-          collapsed={collapsed} 
-        />
-      )}
+
 
       {/* Navigation */}
       <nav style={{ flex: 1, padding: '12px 12px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>

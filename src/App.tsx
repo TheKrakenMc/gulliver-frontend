@@ -9,14 +9,12 @@ import QualityView from './components/QualityView';
 import LogisticsView from './components/LogisticsView';
 import PDCAView from './components/PDCAView';
 import LoginView from './components/LoginView';
+import PLMView from './components/plm/PLMView';
 import type { ViewId, FilterState, PlanRecord } from './types';
 import { filterOptions } from './data/mockData';
+import { useGlobalStore } from './store/globalStore';
 
-const defaultPlanRecords: PlanRecord[] = [
-  { id_plan: 'PLAN-TM-01', linea: 'HMP-1', turno: 'Matutino', sku: 'DASH-INNER-001', target_hr: 45 },
-  { id_plan: 'PLAN-TV-01', linea: 'HMP-1', turno: 'Vespertino', sku: 'DASH-INNER-001', target_hr: 42 },
-  { id_plan: 'PLAN-TN-01', linea: 'INJ-1', turno: 'Nocturno', sku: 'CONSOLE-004', target_hr: 38 },
-];
+const defaultPlanRecords: PlanRecord[] = [];
 
 const AUTH_STORAGE_KEY = 'gulliver_auth_session';
 
@@ -30,13 +28,7 @@ export default function App() {
     process: filterOptions.processes[0],
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem(AUTH_STORAGE_KEY) !== null;
-  });
-  const [user, setUser] = useState<{ name: string; dept: string; role: string } | null>(() => {
-    const savedUser = localStorage.getItem(AUTH_STORAGE_KEY);
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const { isAuthenticated, userSession, setUserSession } = useGlobalStore();
 
   // Shared state: Logistics planning → HourByHour target
   const [planRecords, setPlanRecords] = useState<PlanRecord[]>(defaultPlanRecords);
@@ -53,15 +45,7 @@ export default function App() {
   };
 
   const handleLogin = (userData: { name: string; dept: string; role: string }) => {
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
-    setUser(userData);
-    setIsAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    setIsAuthenticated(false);
-    setUser(null);
+    setUserSession(userData);
   };
 
   if (!isAuthenticated) {
@@ -70,7 +54,7 @@ export default function App() {
 
   return (
     <>
-      <Sidebar activeView={activeView} onNavigate={setActiveView} user={user} onLogout={handleLogout} />
+      <Sidebar activeView={activeView} onNavigate={setActiveView} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', overflow: 'hidden' }}>
         <GlobalFilterBar
           filters={filters}
@@ -84,8 +68,9 @@ export default function App() {
             {activeView === 'hourByHour' && <HourByHourView key="hourByHour" filters={filters} planTarget={planTarget} />}
             {activeView === 'maintenance' && <MaintenanceView key="maintenance" />}
             {activeView === 'quality' && <QualityView key="quality" />}
-            {activeView === 'logistics' && <LogisticsView key="logistics" planRecords={planRecords} onUpdatePlanRecords={setPlanRecords} />}
+            {activeView === 'logistics' && <LogisticsView key="logistics" filters={filters} planRecords={planRecords} onUpdatePlanRecords={setPlanRecords} user={userSession!} />}
             {activeView === 'pdca' && <PDCAView key="pdca" />}
+            {activeView === 'engineering' && <PLMView key="engineering" filters={filters} />}
           </AnimatePresence>
         </main>
       </div>

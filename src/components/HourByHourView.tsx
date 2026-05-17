@@ -358,7 +358,7 @@ function ValidationPill({ status, dept }: { status: ValidationStatus; dept: 'MTT
   );
 }
 
-function AnalysisBadge({ fault, onClick }: { fault: FaultRecord; onClick: () => void }) {
+function AnalysisBadge({ fault, onClick }: { fault: FaultRecord | ScrapRecord; onClick: () => void }) {
   if (fault.analysisComplete) {
     const isWhys = fault.analysisType === '5whys';
     return (
@@ -429,8 +429,9 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
   /* ── UI state ── */
   const [faultModal, setFaultModal] = useState<number | null>(null);
   const [scrapModal, setScrapModal] = useState<number | null>(null);
-  const [analysisDrawer, setAnalysisDrawer] = useState<FaultRecord | null>(null);
+  const [analysisDrawer, setAnalysisDrawer] = useState<FaultRecord | ScrapRecord | null>(null);
   const [validationPanel, setValidationPanel] = useState(false);
+  const [toast, setToast] = useState<{message: string; visible: boolean} | null>(null);
 
   /* ── Actions ── */
   const addRow = () => {
@@ -438,8 +439,8 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
   };
 
   const updateRecord = (index: number, field: keyof HourRecord, value: string) => {
-    setRecords((prev) =>
-      prev.map((r, i) => {
+    setRecords((prev) => {
+      const next = prev.map((r, i) => {
         if (i !== index) return r;
         let updated = { ...r };
         if (field === 'comments') updated.comments = value;
@@ -447,9 +448,22 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
         updated.oeeLoss = updated.target > 0 && updated.actualOK < updated.target
           ? parseFloat((((updated.target - updated.actualOK) / updated.target) * 100).toFixed(1))
           : 0;
+
+        // Discrepancy Toast logic
+        if (updated.actualOK < updated.target) {
+          if (updated.comments.trim().length > 0 && !updated.deviationNotified) {
+            updated.deviationNotified = true;
+            setToast({ message: `Notificación enviada: Desviación registrada en hora ${updated.hour}.`, visible: true });
+            setTimeout(() => setToast(null), 4000);
+          }
+        } else {
+          updated.deviationNotified = false;
+        }
+
         return updated;
-      })
-    );
+      });
+      return next;
+    });
   };
 
   const registerFault = (
@@ -482,12 +496,21 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
     });
   };
 
-  const updateFault = (updatedFault: FaultRecord) => {
-    setFaultsByHour((prev) => {
-      const next = { ...prev };
-      for (const key in next) next[key] = next[key].map((f) => f.id === updatedFault.id ? updatedFault : f);
-      return next;
-    });
+  const updateFault = (updatedFault: any) => {
+    const isFault = 'maquinaNombre' in updatedFault;
+    if (isFault) {
+      setFaultsByHour((prev) => {
+        const next = { ...prev };
+        for (const key in next) next[key] = next[key].map((f) => f.id === updatedFault.id ? updatedFault : f);
+        return next;
+      });
+    } else {
+      setScrapByHour((prev) => {
+        const next = { ...prev };
+        for (const key in next) next[key] = next[key].map((s) => s.id === updatedFault.id ? updatedFault : s);
+        return next;
+      });
+    }
   };
 
   const updateValidation = (id: string, type: 'fault' | 'scrap', dept: string, status: ValidationStatus) => {
@@ -562,7 +585,7 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
         </div>
 
         {/* ── KPI Cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14 }}>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
             { label: t('hourByHour.total_ok'), value: totals.actualOK, icon: <CheckCircle2 size={16} />, color: '#10b981' },
             { label: t('hourByHour.scrap'), value: `${totals.scrap} (${allScrap.length} def.)`, icon: <AlertTriangle size={16} />, color: '#ef4444' },
@@ -664,7 +687,17 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
                       </td>
                       {/* Comments */}
                       <td style={tdStyle}>
-                        <input type="text" style={{ ...inputStyle, textAlign: 'left' }} value={record.comments} onChange={(e) => updateRecord(index, 'comments', e.target.value)} placeholder="Comentario..." />
+                        <div style={{ position: 'relative' }}>
+                          <input type="text" 
+                            style={{ ...inputStyle, textAlign: 'left', borderColor: (record.actualOK < record.target && record.comments.trim().length === 0) ? '#ef4444' : 'var(--gv-border)', paddingRight: (record.actualOK < record.target && record.comments.trim().length === 0) ? 28 : 10 }} 
+                            value={record.comments} 
+                            onChange={(e) => updateRecord(index, 'comments', e.target.value)} 
+                            placeholder={(record.actualOK < record.target) ? '¡Comentario obligatorio!' : 'Comentario...'} 
+                          />
+                          {(record.actualOK < record.target && record.comments.trim().length === 0) && (
+                            <AlertTriangle size={14} color="#ef4444" style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)' }} />
+                          )}
+                        </div>
                       </td>
 
                       {/* ── FAULTS CELL ── */}
@@ -715,8 +748,10 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
                               <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 22, borderRadius: 6, background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', color: '#fff', fontSize: 11, fontWeight: 800, padding: '0 6px', flexShrink: 0 }}>
                                 {scrap.cantidad}
                               </span>
-                              {/* Quality validation */}
-                              <ValidationPill status={scrap.validationQuality} dept="CAL" />
+                              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                <AnalysisBadge fault={scrap} onClick={() => setAnalysisDrawer(scrap)} />
+                                <ValidationPill status={scrap.validationQuality} dept="CAL" />
+                              </div>
                             </motion.div>
                           ))}
                           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} onClick={() => setScrapModal(index)}
@@ -887,6 +922,40 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
           )}
         </AnimatePresence>
       </motion.div>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && toast.visible && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            style={{
+              position: 'fixed',
+              bottom: 30,
+              right: 30,
+              background: 'var(--gv-surface)',
+              border: '1px solid var(--gv-border)',
+              borderRadius: 12,
+              padding: '16px 20px',
+              boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              zIndex: 9999,
+            }}
+          >
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0 }}>
+              <CheckCircle2 size={18} />
+            </div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--gv-text-heading)' }}>Alerta Enviada</div>
+              <div style={{ fontSize: 13, color: 'var(--gv-text-muted)', marginTop: 2 }}>{toast.message}</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Modals ── */}
       <AnimatePresence>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Mail, Lock, LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import { LogIn, AlertCircle, Loader2 } from 'lucide-react';
 
 interface LoginViewProps {
   onLogin: (userData: { name: string; dept: string; role: string }) => void;

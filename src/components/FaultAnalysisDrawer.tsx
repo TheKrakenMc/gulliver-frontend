@@ -21,9 +21,9 @@ import type { FaultRecord, AnalysisType, FiveWhysData, IshikawaData, IshikawaCau
 
 interface FaultAnalysisDrawerProps {
   open: boolean;
-  fault: FaultRecord | null;
+  fault: FaultRecord | ScrapRecord | null;
   onClose: () => void;
-  onSave: (updatedFault: FaultRecord) => void;
+  onSave: (updatedFault: any) => void;
 }
 
 const emptyFiveWhys: FiveWhysData = {
@@ -59,16 +59,18 @@ const ishikawaCategories: {
 ];
 
 export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: FaultAnalysisDrawerProps) {
-  const [analysisType, setAnalysisType] = useState<AnalysisType>('5whys');
+  const [analysisType, setAnalysisType] = useState<AnalysisType>('ishikawa');
   const [fiveWhys, setFiveWhys] = useState<FiveWhysData>(emptyFiveWhys);
   const [ishikawa, setIshikawa] = useState<IshikawaData>(emptyIshikawa);
   const [newCauseText, setNewCauseText] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (fault) {
-      setAnalysisType(fault.analysisType || '5whys');
+      const isFault = 'maquinaNombre' in fault;
+      const desc = isFault ? fault.fallaDescripcion : (fault as ScrapRecord).defecto;
+      setAnalysisType(fault.analysisType || 'ishikawa');
       setFiveWhys(fault.fiveWhys || { ...emptyFiveWhys, whys: [...emptyFiveWhys.whys] as [string,string,string,string,string] });
-      setIshikawa(fault.ishikawa || { ...emptyIshikawa, effect: fault.fallaDescripcion });
+      setIshikawa(fault.ishikawa || { ...emptyIshikawa, effect: desc });
     }
   }, [fault]);
 
@@ -79,7 +81,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
       ? fiveWhys.whys.some((w) => w.trim() !== '')
       : Object.values(ishikawa).some((v) => Array.isArray(v) && v.length > 0);
 
-    const updated: FaultRecord = {
+    const updated = {
       ...fault,
       analysisType,
       analysisComplete: hasContent,
@@ -134,6 +136,11 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
     transition: 'all 0.2s ease',
     resize: 'none' as const,
   };
+
+  const isFault = fault && 'maquinaNombre' in fault;
+  const itemMachine = isFault ? fault.maquinaNombre : fault?.tecnologia;
+  const itemCode = isFault ? fault.codigoFalla : fault?.codigoDefecto;
+  const itemDesc = isFault ? fault.fallaDescripcion : fault?.defecto;
 
   return (
     <AnimatePresence>
@@ -207,7 +214,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                   </h2>
                 </div>
                 <p style={{ fontSize: 12, color: 'var(--gv-text-muted)', margin: 0, paddingLeft: 42 }}>
-                  {fault.maquinaNombre} — [{fault.codigoFalla}] {fault.fallaDescripcion}
+                  {itemMachine} — [{itemCode}] {itemDesc}
                 </p>
               </div>
               <button
@@ -241,8 +248,9 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
               }}
             >
               {([
-                { key: '5whys' as AnalysisType, label: '5 Porqués', icon: <GitBranch size={14} /> },
                 { key: 'ishikawa' as AnalysisType, label: 'Ishikawa (6M)', icon: <Network size={14} /> },
+                { key: '5whys' as AnalysisType, label: '5 Porqués', icon: <GitBranch size={14} /> },
+                { key: 'pdca' as AnalysisType, label: 'PDCA', icon: <Save size={14} /> },
               ]).map((tab) => (
                 <motion.button
                   key={tab.key}
@@ -307,10 +315,10 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                         Problema
                       </div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gv-text-heading)' }}>
-                        [{fault.codigoFalla}] {fault.fallaDescripcion}
+                        [{itemCode}] {itemDesc}
                       </div>
                       <div style={{ fontSize: 12, color: 'var(--gv-text-muted)', marginTop: 4 }}>
-                        {fault.maquinaNombre} — Downtime: {fault.downtimeMin} min
+                        {itemMachine} {isFault && `— Downtime: ${(fault as FaultRecord).downtimeMin} min`}
                       </div>
                     </div>
 
@@ -476,7 +484,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                       />
                     </div>
                   </motion.div>
-                ) : (
+                ) : analysisType === 'ishikawa' ? (
                   /* ─── Ishikawa ─── */
                   <motion.div
                     key="ishikawa"
@@ -596,7 +604,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                           Efecto / Problema
                         </div>
                         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gv-text-heading)', marginTop: 2 }}>
-                          [{fault.codigoFalla}] {fault.fallaDescripcion}
+                          [{itemCode}] {itemDesc}
                         </div>
                       </div>
                       <div style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--gv-text-muted)' }}>
@@ -810,6 +818,26 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                           onChange={(e) => setIshikawa((p) => ({ ...p, correctiveAction: e.target.value }))}
                         />
                       </div>
+                    </div>
+                  </motion.div>
+                ) : (
+                  /* ─── PDCA ─── */
+                  <motion.div
+                    key="pdca"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}
+                  >
+                    <div className="glass-card" style={{ width: '100%', maxWidth: 620, padding: '24px', textAlign: 'center', color: 'var(--gv-text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <Save size={32} color="#8b5cf6" style={{ marginBottom: 12, opacity: 0.8 }} />
+                      <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--gv-text-heading)' }}>
+                        Gestión PDCA
+                      </div>
+                      <p style={{ marginTop: 8, fontSize: 13 }}>
+                        El plan de acción será gestionado por el equipo multidisciplinario desde el módulo de PDCA.
+                      </p>
                     </div>
                   </motion.div>
                 )}
