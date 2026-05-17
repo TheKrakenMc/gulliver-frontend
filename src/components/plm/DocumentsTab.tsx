@@ -283,13 +283,23 @@ export default function DocumentsTab({ products }: DocumentsTabProps) {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                {['Tipo', 'Título', 'Producto', 'Versión', 'Estado', 'Actualizado', 'Autor', ''].map(h => (
-                  <th key={h} style={{
+                {[
+                  { label: 'Tipo', minW: 120 },
+                  { label: 'Título', minW: 240 },
+                  { label: 'Producto', minW: 130 },
+                  { label: 'Versión', minW: 80 },
+                  { label: 'Estado', minW: 110 },
+                  { label: 'Actualizado', minW: 120 },
+                  { label: 'Autor', minW: 110 },
+                  { label: '', minW: 60 }
+                ].map(({ label, minW }) => (
+                  <th key={label} style={{
                     padding: '12px 16px', textAlign: 'left', fontSize: 10,
                     fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em',
                     color: 'var(--gv-text-muted)', borderBottom: '2px solid var(--gv-border)',
                     background: 'var(--gv-surface-alt)',
-                  }}>{h}</th>
+                    minWidth: minW,
+                  }}>{label}</th>
                 ))}
               </tr>
             </thead>

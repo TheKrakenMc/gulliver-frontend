@@ -144,9 +144,13 @@ export default function PDCAView() {
       </div>
 
       {/* PDCA Board */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" style={{
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 20,
         flex: 1,
-        minHeight: 0,
+        overflowX: 'auto',
+        paddingBottom: 12,
       }}>
         {columns.map((col, colIndex) => (
           <motion.div
@@ -163,6 +167,8 @@ export default function PDCAView() {
               border: '1px solid var(--gv-border)',
               padding: '4px',
               overflow: 'hidden',
+              flex: '1 0 280px',
+              minHeight: 400,
             }}
           >
             {/* Column header */}

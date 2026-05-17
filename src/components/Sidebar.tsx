@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,10 +31,202 @@ const navItems: { id: ViewId; translationKey: string; icon: ReactNode; sectionKe
 ];
 
 export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
-  const { sidebarCollapsed: collapsed, toggleSidebar } = useGlobalStore();
+  const { sidebarCollapsed: collapsed, toggleSidebar, isMobileDrawerOpen, setMobileDrawerOpen } = useGlobalStore();
   const { t } = useTranslation();
 
+  const [isTablet, setIsTablet] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsTablet(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleNavClick = (viewId: ViewId) => {
+    onNavigate(viewId);
+    if (isTablet) {
+      setMobileDrawerOpen(false);
+    }
+  };
+
   let lastSection = '';
+
+  if (isTablet) {
+    return (
+      <AnimatePresence>
+        {isMobileDrawerOpen && (
+          <>
+            {/* Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileDrawerOpen(false)}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0, 0, 0, 0.4)',
+                backdropFilter: 'blur(4px)',
+                zIndex: 99,
+              }}
+            />
+            {/* Slide-out Navigation Drawer */}
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              style={{
+                background: 'var(--gv-sidebar)',
+                borderRight: '1px solid var(--gv-border)',
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100vh',
+                position: 'fixed',
+                left: 0,
+                top: 0,
+                bottom: 0,
+                width: 260,
+                zIndex: 100,
+                overflow: 'hidden',
+                boxShadow: 'var(--gv-shadow-lg)',
+              }}
+            >
+              {/* Drawer Header */}
+              <div
+                style={{
+                  padding: '20px 24px',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  justifyContent: 'space-between',
+                  minHeight: 72,
+                }}
+              >
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 10,
+                    background: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <img src="/apg.png" width={36} height={36} alt="Logo" />
+                </div>
+                
+                <div style={{ flex: 1 }}>
+                  <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: 18, letterSpacing: -0.5 }}>
+                    Gulliver
+                  </span>
+                </div>
+
+                <motion.button
+                  whileHover={{ background: 'rgba(255,255,255,0.08)' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setMobileDrawerOpen(false)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--gv-sidebar-text)',
+                    cursor: 'pointer',
+                    padding: 6,
+                    borderRadius: 8,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  title={t('common.close', 'Close')}
+                >
+                  <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--gv-sidebar-text)' }}>✕</span>
+                </motion.button>
+              </div>
+
+              {/* Drawer Navigation */}
+              <nav style={{ flex: 1, padding: '12px 12px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
+                {navItems.map((item) => {
+                  const isActive = item.id === activeView;
+                  const sectionLabel = item.sectionKey ? t(`sidebar.${item.sectionKey}`) : undefined;
+                  const showSection = sectionLabel && sectionLabel !== lastSection;
+                  if (sectionLabel) lastSection = sectionLabel;
+
+                  return (
+                    <div key={item.id}>
+                      {showSection && (
+                        <div
+                          style={{
+                            fontSize: 10,
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.08em',
+                            color: '#475569',
+                            padding: '14px 16px 6px',
+                            userSelect: 'none',
+                          }}
+                        >
+                          {sectionLabel}
+                        </div>
+                      )}
+
+                      <motion.button
+                        onClick={() => handleNavClick(item.id)}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 12,
+                          padding: '11px 16px',
+                          justifyContent: 'flex-start',
+                          borderRadius: 10,
+                          border: 'none',
+                          cursor: 'pointer',
+                          width: '100%',
+                          background: isActive ? 'var(--gv-sidebar-active)' : 'transparent',
+                          color: isActive ? 'var(--gv-sidebar-active-text)' : 'var(--gv-sidebar-text)',
+                          fontSize: 13,
+                          fontWeight: isActive ? 600 : 400,
+                          transition: 'all 0.2s ease',
+                          fontFamily: 'inherit',
+                          position: 'relative',
+                        }}
+                      >
+                        {isActive && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              left: 0,
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              width: 3,
+                              height: 22,
+                              borderRadius: 2,
+                              background: 'var(--gv-primary)',
+                            }}
+                          />
+                        )}
+                        <span style={{ flexShrink: 0 }}>{item.icon}</span>
+                        <span style={{ whiteSpace: 'nowrap' }}>
+                          {t(`sidebar.${item.translationKey}`)}
+                        </span>
+                      </motion.button>
+                    </div>
+                  );
+                })}
+              </nav>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    );
+  }
 
   return (
     <motion.aside
@@ -120,8 +313,6 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
         </motion.button>
       </div>
 
-
-
       {/* Navigation */}
       <nav style={{ flex: 1, padding: '12px 12px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
         {navItems.map((item) => {
@@ -155,7 +346,7 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
               )}
 
               <motion.button
-                onClick={() => onNavigate(item.id)}
+                onClick={() => handleNavClick(item.id)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 style={{
@@ -213,10 +404,6 @@ export default function Sidebar({ activeView, onNavigate }: SidebarProps) {
           );
         })}
       </nav>
-
-
-
-
     </motion.aside>
   );
 }

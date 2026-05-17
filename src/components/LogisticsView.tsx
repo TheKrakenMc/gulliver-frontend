@@ -273,14 +273,14 @@ export default function LogisticsView({ filters, planRecords, onUpdatePlanRecord
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Inter', sans-serif" }}>
                   <thead>
                     <tr>
-                      <th style={{ ...thStyle, width: 50 }}>#</th>
-                      <th style={thStyle}>{t('logistics.col_line')}</th>
-                      <th style={thStyle}>{t('logistics.col_shift')}</th>
-                      <th style={thStyle}>{t('logistics.col_time')}</th>
-                      <th style={thStyle}>{t('logistics.col_sku')}</th>
-                      <th style={{ ...thStyle, width: 130 }}>{t('logistics.col_target_hr')}</th>
-                      <th style={{ ...thStyle, width: 130 }}>{t('logistics.col_target_shift')}</th>
-                      <th style={{ ...thStyle, width: 60 }}></th>
+                      <th style={{ ...thStyle, minWidth: 50 }}>#</th>
+                      <th style={{ ...thStyle, minWidth: 120 }}>{t('logistics.col_line')}</th>
+                      <th style={{ ...thStyle, minWidth: 150 }}>{t('logistics.col_shift')}</th>
+                      <th style={{ ...thStyle, minWidth: 160 }}>{t('logistics.col_time')}</th>
+                      <th style={{ ...thStyle, minWidth: 200 }}>{t('logistics.col_sku')}</th>
+                      <th style={{ ...thStyle, minWidth: 120 }}>{t('logistics.col_target_hr')}</th>
+                      <th style={{ ...thStyle, minWidth: 120 }}>{t('logistics.col_target_shift')}</th>
+                      <th style={{ ...thStyle, minWidth: 60 }}></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -509,14 +509,14 @@ export default function LogisticsView({ filters, planRecords, onUpdatePlanRecord
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Inter', sans-serif" }}>
                   <thead>
                     <tr>
-                      <th style={thStyle}>{t('logistics.col_date')}</th>
-                      <th style={thStyle}>{t('logistics.col_line')}</th>
-                      <th style={thStyle}>{t('logistics.col_shift')}</th>
-                      <th style={thStyle}>{t('logistics.col_time')}</th>
-                      <th style={thStyle}>{t('logistics.col_sku')}</th>
-                      <th style={{ ...thStyle, width: 130 }}>{t('logistics.col_target_shift')}</th>
-                      <th style={thStyle}>{t('logistics.col_status')}</th>
-                      <th style={thStyle}>{t('logistics.col_creator')}</th>
+                      <th style={{ ...thStyle, minWidth: 110 }}>{t('logistics.col_date')}</th>
+                      <th style={{ ...thStyle, minWidth: 100 }}>{t('logistics.col_line')}</th>
+                      <th style={{ ...thStyle, minWidth: 120 }}>{t('logistics.col_shift')}</th>
+                      <th style={{ ...thStyle, minWidth: 140 }}>{t('logistics.col_time')}</th>
+                      <th style={{ ...thStyle, minWidth: 180 }}>{t('logistics.col_sku')}</th>
+                      <th style={{ ...thStyle, minWidth: 130 }}>{t('logistics.col_target_shift')}</th>
+                      <th style={{ ...thStyle, minWidth: 120 }}>{t('logistics.col_status')}</th>
+                      <th style={{ ...thStyle, minWidth: 120 }}>{t('logistics.col_creator')}</th>
                     </tr>
                   </thead>
                   <tbody>

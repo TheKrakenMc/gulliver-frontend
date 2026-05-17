@@ -234,21 +234,21 @@ export default function ProductsTab({ products, onUpdateProducts, filters }: Pro
               <tr>
                 {[
                   { k: 'plm.gpn', w: 160 },
-                  { k: 'plm.product_name', w: undefined },
+                  { k: 'plm.product_name', w: 180 },
                   { k: 'plm.version', w: 80 },
                   { k: 'plm.state', w: 120 },
                   { k: 'plm.technologies', w: 200 },
-                  { k: 'plm.cycle_time', w: 100 },
-                  { k: 'plm.rate_per_hour', w: 100 },
+                  { k: 'plm.cycle_time', w: 110 },
+                  { k: 'plm.rate_per_hour', w: 110 },
                 ].map(({ k, w }) => (
                   <th key={k} style={{
                     padding: '12px 16px', textAlign: 'left', fontSize: 10,
                     fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em',
                     color: 'var(--gv-text-muted)', borderBottom: '2px solid var(--gv-border)',
-                    background: 'var(--gv-surface-alt)', width: w,
+                    background: 'var(--gv-surface-alt)', minWidth: w,
                   }}>{t(k)}</th>
                 ))}
-                <th style={{ width: 48, background: 'var(--gv-surface-alt)', borderBottom: '2px solid var(--gv-border)' }} />
+                <th style={{ minWidth: 48, background: 'var(--gv-surface-alt)', borderBottom: '2px solid var(--gv-border)' }} />
               </tr>
             </thead>
             <tbody>
@@ -270,7 +270,7 @@ export default function ProductsTab({ products, onUpdateProducts, filters }: Pro
                     onClick={() => setSelectedProduct(product)}
                   >
                     <td style={{ padding: '12px 16px', borderBottom: '1px solid var(--gv-border)' }}>
-                      <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--gv-primary)', fontFamily: 'monospace' }}>
+                      <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--gv-primary)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
                         {product.gpn}
                       </span>
                     </td>

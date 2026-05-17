@@ -18,6 +18,7 @@ interface GlobalState {
   userSession: UserSession | null;
   isAuthenticated: boolean;
   sidebarCollapsed: boolean;
+  isMobileDrawerOpen: boolean;
   notifications: number;
   
   setDateRange: (range: DateRange) => void;
@@ -25,6 +26,8 @@ interface GlobalState {
   logout: () => void;
   toggleSidebar: () => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
+  setMobileDrawerOpen: (open: boolean) => void;
+  toggleMobileDrawer: () => void;
   clearNotifications: () => void;
 }
 
@@ -51,6 +54,7 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   userSession: getInitialSession(),
   isAuthenticated: localStorage.getItem(AUTH_STORAGE_KEY) !== null,
   sidebarCollapsed: false,
+  isMobileDrawerOpen: false,
   notifications: 3, // Mock count for demo purposes
   
   setDateRange: (range) => set({ globalDateRange: range }),
@@ -69,5 +73,7 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   },
   toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
+  setMobileDrawerOpen: (open) => set({ isMobileDrawerOpen: open }),
+  toggleMobileDrawer: () => set((state) => ({ isMobileDrawerOpen: !state.isMobileDrawerOpen })),
   clearNotifications: () => set({ notifications: 0 }),
 }));

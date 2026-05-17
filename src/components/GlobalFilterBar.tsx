@@ -1,10 +1,10 @@
-import { Sun, Moon, ChevronDown, Bell, LogOut, User as UserIcon, Calendar } from 'lucide-react';
+import { Sun, Moon, ChevronDown, Bell, LogOut, User as UserIcon, Calendar, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { FilterState } from '../types';
 import { filterOptions } from '../data/mockData';
 import { useGlobalStore } from '../store/globalStore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface GlobalFilterBarProps {
   filters: FilterState;
@@ -20,7 +20,7 @@ export default function GlobalFilterBar({
   onToggleDarkMode,
 }: GlobalFilterBarProps) {
   const { t, i18n } = useTranslation();
-  const { userSession, logout, globalDateRange, setDateRange, notifications, clearNotifications } = useGlobalStore();
+  const { userSession, logout, globalDateRange, setDateRange, notifications, clearNotifications, toggleMobileDrawer } = useGlobalStore();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -30,19 +30,29 @@ export default function GlobalFilterBar({
     i18n.changeLanguage(isSpanish ? 'en' : 'es');
   };
 
+  const [isTablet, setIsTablet] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsTablet(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const selectStyle: React.CSSProperties = {
     appearance: 'none',
     background: 'var(--gv-surface-alt)',
     border: '1px solid var(--gv-border)',
     borderRadius: 8,
-    padding: '8px 36px 8px 14px',
+    padding: isTablet ? '8px 26px 8px 10px' : '8px 36px 8px 14px',
     color: 'var(--gv-text-heading)',
     fontSize: 13,
     fontWeight: 500,
     fontFamily: 'inherit',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
-    minWidth: 120,
+    minWidth: isTablet ? 90 : 120,
   };
 
   const wrapperStyle: React.CSSProperties = {
@@ -53,7 +63,7 @@ export default function GlobalFilterBar({
 
   const chevronStyle: React.CSSProperties = {
     position: 'absolute',
-    right: 10,
+    right: 8,
     pointerEvents: 'none',
     color: 'var(--gv-text-muted)',
   };
@@ -72,7 +82,7 @@ export default function GlobalFilterBar({
       style={{
         background: 'var(--gv-surface)',
         borderBottom: '1px solid var(--gv-border)',
-        padding: '12px 28px',
+        padding: isTablet ? '10px 16px' : '12px 28px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -83,16 +93,41 @@ export default function GlobalFilterBar({
         backdropFilter: 'blur(12px)',
       }}
     >
-      <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: isTablet ? 8 : 16, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+        {/* Hamburger Menu Button for Tablet/Mobile Drawer */}
+        {isTablet && (
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleMobileDrawer}
+            style={{
+              background: 'var(--gv-surface-alt)',
+              border: '1px solid var(--gv-border)',
+              color: 'var(--gv-text-heading)',
+              cursor: 'pointer',
+              padding: '6px',
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: 4,
+              marginBottom: 0,
+              height: 36,
+              width: 36,
+            }}
+          >
+            <Menu size={18} />
+          </motion.button>
+        )}
+
         {/* Date Range Selector */}
         <div>
           <div style={labelStyle}>{t('common.date', 'Date Range')}</div>
           <div style={wrapperStyle}>
-            <div style={{ position: 'absolute', left: 10, color: 'var(--gv-text-muted)' }}>
-              <Calendar size={14} />
+            <div style={{ position: 'absolute', left: 8, color: 'var(--gv-text-muted)' }}>
+              <Calendar size={13} />
             </div>
             <select
-              style={{ ...selectStyle, paddingLeft: 32 }}
+              style={{ ...selectStyle, paddingLeft: 28 }}
               value={globalDateRange.preset}
               onChange={(e) => {
                 const preset = e.target.value as any;
@@ -104,11 +139,11 @@ export default function GlobalFilterBar({
               <option value="week">This Week</option>
               <option value="month">This Month</option>
             </select>
-            <ChevronDown size={14} style={chevronStyle} />
+            <ChevronDown size={13} style={chevronStyle} />
           </div>
         </div>
 
-        <span style={{ color: 'var(--gv-text-muted)', fontSize: 18, marginBottom: 6, userSelect: 'none' }}>|</span>
+        {!isTablet && <span style={{ color: 'var(--gv-text-muted)', fontSize: 18, marginBottom: 6, userSelect: 'none' }}>|</span>}
 
         {/* Location */}
         <div>
@@ -123,11 +158,11 @@ export default function GlobalFilterBar({
                 <option key={loc} value={loc}>{loc}</option>
               ))}
             </select>
-            <ChevronDown size={14} style={chevronStyle} />
+            <ChevronDown size={13} style={chevronStyle} />
           </div>
         </div>
 
-        <span style={{ color: 'var(--gv-text-muted)', fontSize: 18, marginBottom: 6, userSelect: 'none' }}>›</span>
+        {!isTablet && <span style={{ color: 'var(--gv-text-muted)', fontSize: 18, marginBottom: 6, userSelect: 'none' }}>›</span>}
 
         {/* Business Unit */}
         <div>
@@ -142,11 +177,11 @@ export default function GlobalFilterBar({
                 <option key={bu} value={bu}>{bu}</option>
               ))}
             </select>
-            <ChevronDown size={14} style={chevronStyle} />
+            <ChevronDown size={13} style={chevronStyle} />
           </div>
         </div>
 
-        <span style={{ color: 'var(--gv-text-muted)', fontSize: 18, marginBottom: 6, userSelect: 'none' }}>›</span>
+        {!isTablet && <span style={{ color: 'var(--gv-text-muted)', fontSize: 18, marginBottom: 6, userSelect: 'none' }}>›</span>}
 
         {/* Facility */}
         <div>
@@ -161,11 +196,11 @@ export default function GlobalFilterBar({
                 <option key={f} value={f}>{f}</option>
               ))}
             </select>
-            <ChevronDown size={14} style={chevronStyle} />
+            <ChevronDown size={13} style={chevronStyle} />
           </div>
         </div>
 
-        <span style={{ color: 'var(--gv-text-muted)', fontSize: 18, marginBottom: 6, userSelect: 'none' }}>›</span>
+        {!isTablet && <span style={{ color: 'var(--gv-text-muted)', fontSize: 18, marginBottom: 6, userSelect: 'none' }}>›</span>}
 
         {/* Process */}
         <div>
@@ -180,7 +215,7 @@ export default function GlobalFilterBar({
                 <option key={p} value={p}>{p}</option>
               ))}
             </select>
-            <ChevronDown size={14} style={chevronStyle} />
+            <ChevronDown size={13} style={chevronStyle} />
           </div>
         </div>
       </div>

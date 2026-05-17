@@ -547,9 +547,9 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
     + allScrap.filter((s) => s.validationQuality === 'pendiente').length;
 
   /* ── Styles ── */
-  const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', background: 'var(--gv-surface-alt)', border: '1px solid var(--gv-border)', borderRadius: 6, color: 'var(--gv-text-heading)', fontSize: 13, fontFamily: "'Inter', sans-serif", fontWeight: 500, textAlign: 'center', transition: 'all 0.2s ease' };
-  const thStyle: React.CSSProperties = { padding: '11px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gv-text-muted)', borderBottom: '2px solid var(--gv-border)', background: 'var(--gv-surface-alt)', position: 'sticky', top: 0, zIndex: 10, whiteSpace: 'nowrap' };
-  const tdStyle: React.CSSProperties = { padding: '8px 10px', borderBottom: '1px solid var(--gv-border)', verticalAlign: 'middle' };
+  const inputStyle: React.CSSProperties = { width: '100%', minHeight: 44, padding: '10px 12px', background: 'var(--gv-surface-alt)', border: '1px solid var(--gv-border)', borderRadius: 8, color: 'var(--gv-text-heading)', fontSize: 15, fontFamily: "'Inter', sans-serif", fontWeight: 600, textAlign: 'center', transition: 'all 0.2s ease' };
+  const thStyle: React.CSSProperties = { padding: '12px 14px', textAlign: 'center', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gv-text-muted)', borderBottom: '2px solid var(--gv-border)', background: 'var(--gv-surface-alt)', position: 'sticky', top: 0, zIndex: 10, whiteSpace: 'nowrap' };
+  const tdStyle: React.CSSProperties = { padding: '10px 12px', borderBottom: '1px solid var(--gv-border)', verticalAlign: 'middle' };
 
   return (
     <>
@@ -627,15 +627,15 @@ export default function HourByHourView({ filters, planTarget }: HourByHourViewPr
             <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Inter', sans-serif" }}>
               <thead>
                 <tr>
-                  <th style={{ ...thStyle, width: 52 }}>Hora</th>
-                  <th style={{ ...thStyle, width: 70 }}>Target</th>
-                  <th style={{ ...thStyle, width: 90 }}>OK</th>
-                  <th style={{ ...thStyle, width: 70 }}>Scrap</th>
-                  <th style={{ ...thStyle, width: 90 }}>DT (min)</th>
-                  <th style={{ ...thStyle, width: 80 }}>OEE Loss</th>
-                  <th style={{ ...thStyle, textAlign: 'left', minWidth: 130 }}>{t('hourByHour.comments')}</th>
-                  <th style={{ ...thStyle, minWidth: 260, background: 'rgba(239,68,68,0.05)', color: '#ef4444', borderLeft: '2px solid rgba(239,68,68,0.15)' }}>{t('hourByHour.registered_faults')}</th>
-                  <th style={{ ...thStyle, minWidth: 260, background: 'rgba(139,92,246,0.05)', color: '#8b5cf6', borderLeft: '2px solid rgba(139,92,246,0.15)' }}>{t('hourByHour.registered_scrap')}</th>
+                  <th style={{ ...thStyle, minWidth: 60 }}>Hora</th>
+                  <th style={{ ...thStyle, minWidth: 70 }}>Target</th>
+                  <th style={{ ...thStyle, minWidth: 90 }}>OK</th>
+                  <th style={{ ...thStyle, minWidth: 70 }}>Scrap</th>
+                  <th style={{ ...thStyle, minWidth: 90 }}>DT (min)</th>
+                  <th style={{ ...thStyle, minWidth: 90 }}>OEE Loss</th>
+                  <th style={{ ...thStyle, textAlign: 'left', minWidth: 160 }}>{t('hourByHour.comments')}</th>
+                  <th style={{ ...thStyle, minWidth: 280, background: 'rgba(239,68,68,0.05)', color: '#ef4444', borderLeft: '2px solid rgba(239,68,68,0.15)' }}>{t('hourByHour.registered_faults')}</th>
+                  <th style={{ ...thStyle, minWidth: 280, background: 'rgba(139,92,246,0.05)', color: '#8b5cf6', borderLeft: '2px solid rgba(139,92,246,0.15)' }}>{t('hourByHour.registered_scrap')}</th>
                 </tr>
               </thead>
               <tbody>

@@ -179,8 +179,8 @@ export default function QualityView() {
                     {defect.codigo}
                   </div>
                   <div style={{
-                    fontSize: 14, fontWeight: 700, color: 'var(--gv-text-heading)',
-                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    fontSize: 13, fontWeight: 700, color: 'var(--gv-text-heading)',
+                    lineHeight: 1.3,
                   }}>
                     {defect.defecto}
                   </div>

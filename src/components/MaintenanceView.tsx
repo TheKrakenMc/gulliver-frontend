@@ -301,28 +301,27 @@ export default function MaintenanceView() {
               <ChevronDown size={14} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--gv-text-muted)', pointerEvents: 'none' }} />
             </div>
           </div>
-        </div>
 
-        {/* Priority + Create button */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: 20, marginTop: 24 }}>
-          <div style={{ width: 200 }}>
+          {/* Priority (Spans 2 columns on medium/large devices) */}
+          <div className="col-span-1 md:col-span-2">
             <div style={labelStyle}>
               <AlertCircle size={12} />
               {t('maintenance.priority')}
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, height: 44 }}>
               {(['Crítica', 'Alta', 'Media', 'Baja'] as const).map((p) => (
                 <button
                   key={p}
                   onClick={() => setPriority(p)}
                   style={{
                     flex: 1,
+                    height: '100%',
                     padding: '8px 4px',
-                    borderRadius: 6,
+                    borderRadius: 8,
                     border: `1px solid ${priority === p ? prioColors[p].text : 'var(--gv-border)'}`,
                     background: priority === p ? prioColors[p].bg : 'transparent',
                     color: priority === p ? prioColors[p].text : 'var(--gv-text-muted)',
-                    fontSize: 11,
+                    fontSize: 13,
                     fontWeight: 700,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
@@ -335,32 +334,37 @@ export default function MaintenanceView() {
             </div>
           </div>
 
-          <motion.button
-            whileHover={isValid ? { scale: 1.02 } : {}}
-            whileTap={isValid ? { scale: 0.97 } : {}}
-            onClick={handleCreateWO}
-            disabled={!isValid}
-            style={{
-              padding: '12px 28px',
-              borderRadius: 10,
-              border: 'none',
-              background: isValid
-                ? 'linear-gradient(135deg, #f97316, #ef4444)'
-                : 'var(--gv-border)',
-              color: isValid ? '#fff' : 'var(--gv-text-muted)',
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: isValid ? 'pointer' : 'not-allowed',
-              fontFamily: 'inherit',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              transition: 'all 0.2s ease',
-            }}
-          >
-            <FileText size={16} />
-            {t('maintenance.btn_open_wo')}
-          </motion.button>
+          {/* Submit button (Spans 1 column) */}
+          <div style={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}>
+            <motion.button
+              whileHover={isValid ? { scale: 1.02 } : {}}
+              whileTap={isValid ? { scale: 0.97 } : {}}
+              onClick={handleCreateWO}
+              disabled={!isValid}
+              style={{
+                width: '100%',
+                height: 44,
+                borderRadius: 8,
+                border: 'none',
+                background: isValid
+                  ? 'linear-gradient(135deg, #f97316, #ef4444)'
+                  : 'var(--gv-border)',
+                color: isValid ? '#fff' : 'var(--gv-text-muted)',
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: isValid ? 'pointer' : 'not-allowed',
+                fontFamily: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <FileText size={16} />
+              {t('maintenance.btn_open_wo')}
+            </motion.button>
+          </div>
         </div>
 
         {/* Preview of selection */}
@@ -419,13 +423,22 @@ export default function MaintenanceView() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Inter', sans-serif" }}>
             <thead>
               <tr>
-                {[t('maintenance.col_id'), t('maintenance.col_machine'), t('maintenance.col_category'), t('maintenance.col_fault'), t('maintenance.col_priority'), t('maintenance.col_status'), t('maintenance.col_date')].map((h) => (
-                  <th key={h} style={{
+                {[
+                  { label: t('maintenance.col_id'), minW: 90 },
+                  { label: t('maintenance.col_machine'), minW: 240 },
+                  { label: t('maintenance.col_category'), minW: 160 },
+                  { label: t('maintenance.col_fault'), minW: 220 },
+                  { label: t('maintenance.col_priority'), minW: 110 },
+                  { label: t('maintenance.col_status'), minW: 110 },
+                  { label: t('maintenance.col_date'), minW: 130 }
+                ].map(({ label, minW }) => (
+                  <th key={label} style={{
                     padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700,
                     textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gv-text-muted)',
                     borderBottom: '1px solid var(--gv-border)', background: 'var(--gv-surface-alt)',
+                    minWidth: minW,
                   }}>
-                    {h}
+                    {label}
                   </th>
                 ))}
               </tr>
