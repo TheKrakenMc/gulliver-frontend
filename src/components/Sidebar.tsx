@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -19,7 +19,7 @@ interface SidebarProps {
   onNavigate: (view: ViewId) => void;
 }
 
-const navItems: { id: ViewId; translationKey: string; icon: React.ReactNode; sectionKey?: string }[] = [
+const navItems: { id: ViewId; translationKey: string; icon: ReactNode; sectionKey?: string }[] = [
   { id: 'dashboard', translationKey: 'dashboard', icon: <LayoutDashboard size={20} />, sectionKey: 'section_production' },
   { id: 'hourByHour', translationKey: 'hourByHour', icon: <ClipboardList size={20} /> },
   { id: 'logistics', translationKey: 'logistics', icon: <Truck size={20} />, sectionKey: 'section_planning' },

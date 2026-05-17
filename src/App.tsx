@@ -16,8 +16,6 @@ import { useGlobalStore } from './store/globalStore';
 
 const defaultPlanRecords: PlanRecord[] = [];
 
-const AUTH_STORAGE_KEY = 'gulliver_auth_session';
-
 export default function App() {
   const [activeView, setActiveView] = useState<ViewId>('dashboard');
   const [darkMode, setDarkMode] = useState(true);

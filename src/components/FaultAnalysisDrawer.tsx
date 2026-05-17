@@ -17,7 +17,7 @@ import {
   Ruler,
   Leaf,
 } from 'lucide-react';
-import type { FaultRecord, AnalysisType, FiveWhysData, IshikawaData, IshikawaCause } from '../types';
+import type { FaultRecord, ScrapRecord, AnalysisType, FiveWhysData, IshikawaData, IshikawaCause } from '../types';
 
 interface FaultAnalysisDrawerProps {
   open: boolean;

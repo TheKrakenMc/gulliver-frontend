@@ -527,7 +527,7 @@ export default function LogisticsView({ filters, planRecords, onUpdatePlanRecord
                         </td>
                       </tr>
                     ) : (
-                      filteredHistory.map((record, index) => {
+                      filteredHistory.map((record) => {
                         const shiftCfg = TURNO_CONFIG[record.turno] || TURNO_CONFIG['Matutino'];
                         const statusColors = {
                           published: { bg: 'rgba(16,185,129,0.1)', color: '#10b981', border: 'rgba(16,185,129,0.2)' },
