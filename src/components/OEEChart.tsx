@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import type { OEELine } from '../types';
 
 interface OEEChartProps {
@@ -6,6 +7,7 @@ interface OEEChartProps {
 }
 
 export default function OEEChart({ data }: OEEChartProps) {
+  const { t } = useTranslation();
   const maxValue = 100;
 
   return (
@@ -20,20 +22,20 @@ export default function OEEChart({ data }: OEEChartProps) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
           <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--gv-text-heading)', margin: 0 }}>
-            OEE por Línea de Producción
+            {t('oee_chart.title')}
           </h3>
           <p style={{ fontSize: 13, color: 'var(--gv-text-muted)', margin: '4px 0 0' }}>
-            Comparativa del turno actual vs target global
+            {t('oee_chart.subtitle')}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div style={{ width: 12, height: 12, borderRadius: 3, background: 'linear-gradient(135deg, #3b82f6, #06b6d4)' }} />
-            <span style={{ color: 'var(--gv-text-muted)' }}>OEE Actual</span>
+            <span style={{ color: 'var(--gv-text-muted)' }}>{t('oee_chart.current_oee')}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div style={{ width: 12, height: 3, borderRadius: 2, background: '#ef4444' }} />
-            <span style={{ color: 'var(--gv-text-muted)' }}>Target 85%</span>
+            <span style={{ color: 'var(--gv-text-muted)' }}>{t('oee_chart.target_label')}</span>
           </div>
         </div>
       </div>

@@ -16,7 +16,9 @@ export const parseTimeToMinutes = (time: string): number => {
 
 // Check if two time slots overlap.
 // Handles cases where end time is less than start time (overnight shifts).
-export const doTimeSlotsOverlap = (a: TimeSlot, b: TimeSlot): boolean => {
+export const doTimeSlotsOverlap = (a: TimeSlot | undefined, b: TimeSlot | undefined): boolean => {
+  if (!a || !a.start || !a.end || !b || !b.start || !b.end) return false;
+
   const aStart = parseTimeToMinutes(a.start);
   let aEnd = parseTimeToMinutes(a.end);
   const bStart = parseTimeToMinutes(b.start);
@@ -67,7 +69,13 @@ export const detectOverlap = (
 ): OverlapResult => {
   const relevantPlans = existingPlans.filter(p => p.fecha === newPlan.fecha && p.linea === newPlan.linea && p.id_plan !== newPlan.id_plan && p.status !== 'cancelled');
 
-  const conflictingPlans = relevantPlans.filter(p => doTimeSlotsOverlap(newPlan.slot, p.slot));
+  const conflictingPlans = relevantPlans.filter(p => {
+    const slotB = p.slot || { 
+      start: TURNO_CONFIG[p.turno]?.start || '00:00', 
+      end: TURNO_CONFIG[p.turno]?.end || '00:00' 
+    };
+    return doTimeSlotsOverlap(newPlan.slot, slotB);
+  });
 
   return {
     hasOverlap: conflictingPlans.length > 0,

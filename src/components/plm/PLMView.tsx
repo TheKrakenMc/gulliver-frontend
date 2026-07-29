@@ -91,15 +91,13 @@ export default function PLMView({ filters }: PLMViewProps) {
       </div>
 
       {/* Filter info banner */}
-      {filters.facility && (
+      {filters.process && (
         <div style={{
           padding: '8px 16px', borderRadius: 8, fontSize: 12, fontWeight: 500,
           background: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.15)',
           color: 'var(--gv-primary)', display: 'flex', alignItems: 'center', gap: 6,
         }}>
-          📍 {t('filters.facility')}: <strong>{filters.facility}</strong>
-          {' · '}
-          {t('filters.process')}: <strong>{filters.process}</strong>
+          📍 {t('filters.process')}: <strong>{filters.process}</strong>
         </div>
       )}
 

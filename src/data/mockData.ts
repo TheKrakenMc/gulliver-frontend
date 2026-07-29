@@ -4,7 +4,6 @@ import type { HourRecord, PDCACard, KPIData, OEELine, PlanRecord } from '../type
 export const filterOptions = {
   locations: ['Planta Puebla', 'Planta Pachuca', 'Planta Saltillo'],
   businessUnits: ['Unidad 1', 'Unidad 2', 'Unidad 3'],
-  facilities: ['Nave 1', 'Nave 2', 'Nave 3', 'Nave 4'],
   processes: ['Inner Dash', 'Outer Dash', 'Door Panel', 'Console', 'IP Carrier'],
 };
 
@@ -156,7 +155,7 @@ export const mockPlanHistory: PlanRecord[] = [
   {
     id_plan: 'PLAN-HIST-01',
     fecha: new Date().toISOString().split('T')[0],
-    planta: filterOptions.facilities[0],
+    planta: filterOptions.processes[0],
     linea: 'HMP-1',
     turno: 'Matutino',
     slot: { start: '06:00', end: '14:00' },
@@ -169,7 +168,7 @@ export const mockPlanHistory: PlanRecord[] = [
   {
     id_plan: 'PLAN-HIST-02',
     fecha: new Date().toISOString().split('T')[0],
-    planta: filterOptions.facilities[0],
+    planta: filterOptions.processes[0],
     linea: 'HMP-1',
     turno: 'Vespertino',
     slot: { start: '14:00', end: '22:00' },
@@ -182,7 +181,7 @@ export const mockPlanHistory: PlanRecord[] = [
   {
     id_plan: 'PLAN-HIST-03',
     fecha: new Date(Date.now() - 86400000).toISOString().split('T')[0], // Yesterday
-    planta: filterOptions.facilities[0],
+    planta: filterOptions.processes[0],
     linea: 'INJ-1',
     turno: '12x12_Dia',
     slot: { start: '06:00', end: '18:00' },
@@ -195,7 +194,7 @@ export const mockPlanHistory: PlanRecord[] = [
   {
     id_plan: 'PLAN-HIST-04',
     fecha: new Date(Date.now() - 86400000).toISOString().split('T')[0], // Yesterday
-    planta: filterOptions.facilities[1], // Different facility
+    planta: filterOptions.processes[1], // Different process
     linea: 'ASM-1',
     turno: 'Mixto',
     slot: { start: '09:00', end: '15:00' },

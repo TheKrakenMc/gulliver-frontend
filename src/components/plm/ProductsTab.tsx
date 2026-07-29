@@ -76,7 +76,7 @@ export default function ProductsTab({ products, onUpdateProducts, filters }: Pro
   const [expandedDocs, setExpandedDocs] = useState(false);
 
   const filtered = products.filter(p => {
-    const matchesFacility = !filters.facility || p.facility === filters.facility;
+    const matchesFacility = true; // Facility filter removed
     const matchesSearch = !search ||
       p.gpn.toLowerCase().includes(search.toLowerCase()) ||
       p.name.toLowerCase().includes(search.toLowerCase());
@@ -122,7 +122,7 @@ export default function ProductsTab({ products, onUpdateProducts, filters }: Pro
         <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
           <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--gv-text-muted)' }} />
           <input
-            style={{ ...inputStyle, paddingLeft: 36 }}
+            style={{ ...inputStyle, padding: '8px 12px 8px 36px' }}
             placeholder={t('plm.search_placeholder')}
             value={search}
             onChange={e => setSearch(e.target.value)}

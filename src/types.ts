@@ -1,13 +1,126 @@
-export type ViewId = 'dashboard' | 'hourByHour' | 'maintenance' | 'quality' | 'logistics' | 'pdca' | 'engineering' | 'operativeRecord';
+export type ViewId = 'dashboard' | 'hourByHour' | 'maintenance' | 'quality' | 'logistics' | 'pdca' | 'engineering' | 'operativeRecord' | 'configuration';
 
 export interface FilterState {
   location: string;
   businessUnit: string;
-  facility: string;
   process: string;
 }
 
+export interface BaseLocation {
+  id: string;
+  name: string;
+}
+
+export interface BaseBusinessUnit {
+  id: string;
+  name: string;
+  location_id: string;
+}
+
+export interface BaseProcess {
+  id: string;
+  name: string;
+  business_unit_id: string;
+}
+
+export interface BaseSector {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export interface BaseClient {
+  id: string;
+  name: string;
+  contact_name?: string;
+  email?: string;
+  phone?: string;
+  sector_id?: string;
+}
+
+export interface ClientWithSector extends BaseClient {
+  sector?: BaseSector;
+}
+
+export interface BaseProduct {
+  id: string;
+  sku: string;
+  name: string;
+  description?: string;
+  client_id?: string;
+  rate_per_hour?: number;
+  process_ids: string[];
+}
+
+export interface HierarchyProduct {
+  id: string;
+  sku: string;
+  name: string;
+  description?: string;
+  client_id?: string;
+  rate_per_hour?: number;
+}
+
+export interface BaseMaintenanceFault {
+  code: string;
+  description: string;
+  category_id: string;
+}
+
+export interface BaseMaintenanceCategory {
+  id: string;
+  name: string;
+  faults?: BaseMaintenanceFault[];
+}
+
+export interface BaseScrapDefect {
+  code: string;
+  name: string;
+  description?: string;
+  process_id: string;
+}
+
+export interface BaseAssetFault {
+  code: string;
+  name: string;
+  description: string;
+  family_id: string;
+}
+
+export interface BaseAssetFamily {
+  id: string;
+  name: string;
+  faults?: BaseAssetFault[];
+}
+
+export interface BaseMachine {
+  id: string;
+  name: string;
+  code: string;
+  nave: string;
+  process_id: string;
+  family_ids?: string[];
+}
+
+export interface HierarchyMachine extends BaseMachine {}
+
+export interface HierarchyProcess extends BaseProcess {
+  products: HierarchyProduct[];
+  machines: HierarchyMachine[];
+}
+
+export interface HierarchyBusinessUnit extends BaseBusinessUnit {
+  processes: HierarchyProcess[];
+}
+
+export interface HierarchyLocation extends BaseLocation {
+  business_units: HierarchyBusinessUnit[];
+}
+
 export interface HourRecord {
+  id?: string;
+  plan_id?: string;
+  record_date?: string;
   hour: number;
   target: number;
   actualOK: number;
@@ -16,6 +129,9 @@ export interface HourRecord {
   comments: string;
   oeeLoss: number; // auto-calculated
   deviationNotified?: boolean;
+  pending?: boolean; // Frontend only: is optimistic/pending
+  isOffline?: boolean; // Frontend only: failed to sync and is in offline queue
+  plannedDowntime?: number; // Frontend only: duration of planned DT
 }
 
 export interface PDCACard {
@@ -70,6 +186,19 @@ export interface ScrapDefecto {
 
 export type ScrapCatalog = Record<string, ScrapDefecto[]>;
 
+/* ─── Downtime Catalog types ─── */
+export interface DowntimeMotivo {
+  codigo: string;
+  descripcion: string;
+}
+
+export interface DowntimeCategoria {
+  categoria: string;
+  motivos: DowntimeMotivo[];
+}
+
+export type DowntimeCatalog = DowntimeCategoria[];
+
 /* ─── Logistics Planning types ─── */
 export type TurnoType = 'Matutino' | 'Vespertino' | 'Nocturno' | 'Mixto' | '12x12_Dia' | '12x12_Noche';
 
@@ -81,7 +210,7 @@ export interface TimeSlot {
 export interface PlanRecord {
   id_plan: string;
   fecha: string;         // ISO date "YYYY-MM-DD"
-  planta: string;        // from FilterState.facility
+  planta: string;        // from FilterState
   linea: string;
   turno: TurnoType;
   slot: TimeSlot;        // computed from turno, but editable for Mixto
@@ -152,12 +281,14 @@ export interface FaultRecord {
   ishikawa?: IshikawaData;
   validationMtto: ValidationStatus;
   validationQuality: ValidationStatus;
+  comments?: string;
   timestamp: string;
 }
 
 export interface ScrapRecord {
   id: string;
   tecnologia: string;
+  process_id?: string;
   codigoDefecto: string;
   defecto: string;
   cantidad: number;
@@ -166,6 +297,7 @@ export interface ScrapRecord {
   fiveWhys?: FiveWhysData;
   ishikawa?: IshikawaData;
   validationQuality: ValidationStatus;
+  comments?: string;
   timestamp: string;
 }
 
@@ -202,6 +334,7 @@ export interface DowntimeRecord {
   id: string;
   reason: string;
   durationMin: number;
+  comments?: string;
   timestamp: string;
 }
 

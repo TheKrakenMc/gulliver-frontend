@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import type { KPIData } from '../types';
 
@@ -8,6 +9,8 @@ interface KPICardProps {
 }
 
 export default function KPICard({ data, index }: KPICardProps) {
+  const { t } = useTranslation();
+
   const statusColors = {
     good: { bg: 'rgba(16, 185, 129, 0.1)', border: 'rgba(16, 185, 129, 0.3)', text: '#10b981' },
     warning: { bg: 'rgba(245, 158, 11, 0.1)', border: 'rgba(245, 158, 11, 0.3)', text: '#f59e0b' },
@@ -65,7 +68,7 @@ export default function KPICard({ data, index }: KPICardProps) {
         >
           <TrendIcon size={12} color={colors.text} />
           <span style={{ fontSize: 11, fontWeight: 600, color: colors.text }}>
-            {data.status === 'good' ? 'On Target' : data.status === 'warning' ? 'Warning' : 'Below Target'}
+            {data.status === 'good' ? t('kpi.on_target') : data.status === 'warning' ? t('kpi.warning') : t('kpi.below_target')}
           </span>
         </div>
       </div>
@@ -84,8 +87,8 @@ export default function KPICard({ data, index }: KPICardProps) {
       {data.target && typeof data.value === 'number' && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 11, color: 'var(--gv-text-muted)' }}>
-            <span>Actual</span>
-            <span>Target: {data.target}{data.unit}</span>
+            <span>{t('kpi.actual')}</span>
+            <span>{t('kpi.target')}: {data.target}{data.unit}</span>
           </div>
           <div
             style={{

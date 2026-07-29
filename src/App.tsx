@@ -10,23 +10,31 @@ import LogisticsView from './components/LogisticsView';
 import PDCAView from './components/PDCAView';
 import LoginView from './components/LoginView';
 import PLMView from './components/plm/PLMView';
+import ConfigurationView from './components/ConfigurationView';
 import type { ViewId, FilterState, PlanRecord } from './types';
 import { filterOptions } from './data/mockData';
 import { useGlobalStore } from './store/globalStore';
+import GlobalLoader from './components/GlobalLoader';
 
 const defaultPlanRecords: PlanRecord[] = [];
 
 export default function App() {
   const [activeView, setActiveView] = useState<ViewId>('dashboard');
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     location: filterOptions.locations[0],
-    businessUnit: filterOptions.businessUnits[2],
-    facility: filterOptions.facilities[3],
+    businessUnit: filterOptions.businessUnits[0],
     process: filterOptions.processes[0],
   });
 
-  const { isAuthenticated, userSession, setUserSession } = useGlobalStore();
+  const { isAuthenticated, userSession, setUserSession, fetchHierarchy } = useGlobalStore();
+
+  // Load hierarchy on mount if authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchHierarchy();
+    }
+  }, [isAuthenticated, fetchHierarchy]);
 
   // Shared state: Logistics planning → HourByHour target
   const [planRecords, setPlanRecords] = useState<PlanRecord[]>(defaultPlanRecords);
@@ -42,23 +50,35 @@ export default function App() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleLogin = (userData: { name: string; dept: string; role: string }) => {
+  const handleLogin = (userData: { id: number; employee_number: string; name: string; email: string | null; role: string; dept: string | null }) => {
     setUserSession(userData);
   };
 
   if (!isAuthenticated) {
-    return <LoginView onLogin={handleLogin} />;
+    return (
+      <>
+        <GlobalLoader />
+        <LoginView onLogin={handleLogin} />
+      </>
+    );
   }
 
   return (
     <>
-      <Sidebar activeView={activeView} onNavigate={setActiveView} />
+      <GlobalLoader />
+      <Sidebar 
+        activeView={activeView} 
+        onNavigate={setActiveView} 
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode(!darkMode)}
+      />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', overflow: 'hidden' }}>
         <GlobalFilterBar
           filters={filters}
           onFilterChange={handleFilterChange}
           darkMode={darkMode}
           onToggleDarkMode={() => setDarkMode(!darkMode)}
+          singleDateOnly={activeView === 'hourByHour'}
         />
         <main style={{ flex: 1, overflow: 'auto' }}>
           <AnimatePresence mode="wait">
@@ -69,6 +89,7 @@ export default function App() {
             {activeView === 'logistics' && <LogisticsView key="logistics" filters={filters} planRecords={planRecords} onUpdatePlanRecords={setPlanRecords} user={userSession!} />}
             {activeView === 'pdca' && <PDCAView key="pdca" />}
             {activeView === 'engineering' && <PLMView key="engineering" filters={filters} />}
+            {activeView === 'configuration' && <ConfigurationView key="configuration" filters={filters} />}
           </AnimatePresence>
         </main>
       </div>

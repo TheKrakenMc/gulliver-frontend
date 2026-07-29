@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   X,
   ChevronDown,
@@ -59,6 +60,7 @@ const ishikawaCategories: {
 ];
 
 export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: FaultAnalysisDrawerProps) {
+  const { t } = useTranslation();
   const [analysisType, setAnalysisType] = useState<AnalysisType>('ishikawa');
   const [fiveWhys, setFiveWhys] = useState<FiveWhysData>(emptyFiveWhys);
   const [ishikawa, setIshikawa] = useState<IshikawaData>(emptyIshikawa);
@@ -210,7 +212,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                     <AlertTriangle size={16} color="#ef4444" />
                   </div>
                   <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--gv-text-heading)', margin: 0 }}>
-                    Análisis de Causa Raíz (RCA)
+                    {t('rca.title')}
                   </h2>
                 </div>
                 <p style={{ fontSize: 12, color: 'var(--gv-text-muted)', margin: 0, paddingLeft: 42 }}>
@@ -248,9 +250,9 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
               }}
             >
               {([
-                { key: 'ishikawa' as AnalysisType, label: 'Ishikawa (6M)', icon: <Network size={14} /> },
-                { key: '5whys' as AnalysisType, label: '5 Porqués', icon: <GitBranch size={14} /> },
-                { key: 'pdca' as AnalysisType, label: 'PDCA', icon: <Save size={14} /> },
+                { key: 'ishikawa' as AnalysisType, label: t('rca.tab_ishikawa'), icon: <Network size={14} /> },
+                { key: '5whys' as AnalysisType, label: t('rca.tab_5whys'), icon: <GitBranch size={14} /> },
+                { key: 'pdca' as AnalysisType, label: t('rca.tab_pdca'), icon: <Save size={14} /> },
               ]).map((tab) => (
                 <motion.button
                   key={tab.key}
@@ -312,7 +314,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                           marginBottom: 6,
                         }}
                       >
-                        Problema
+                        {t('rca.problem')}
                       </div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gv-text-heading)' }}>
                         [{itemCode}] {itemDesc}
@@ -385,15 +387,15 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                                 color: why ? 'var(--gv-text-heading)' : 'var(--gv-text-muted)',
                               }}
                             >
-                              ¿Por qué?
+                              {t('rca.why_label')}
                             </span>
                           </div>
                           <textarea
                             rows={2}
                             style={{ ...inputStyle }}
                             placeholder={i === 0
-                              ? '¿Por qué ocurrió esta falla?'
-                              : `¿Por qué ${fiveWhys.whys[i - 1]?.toLowerCase().slice(0, 50) || '...'}?`
+                              ? t('rca.why_placeholder_1')
+                              : t('rca.why_placeholder_n', { prev: fiveWhys.whys[i - 1]?.toLowerCase().slice(0, 50) || '...' })
                             }
                             value={why}
                             onChange={(e) => updateWhy(i, e.target.value)}
@@ -440,12 +442,12 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                           gap: 6,
                         }}
                       >
-                        <CheckCircle2 size={12} /> Causa Raíz
+                        <CheckCircle2 size={12} /> {t('rca.root_cause')}
                       </div>
                       <textarea
                         rows={2}
                         style={inputStyle}
-                        placeholder="Identificar la causa raíz derivada del análisis..."
+                        placeholder={t('rca.root_cause_placeholder_5w')}
                         value={fiveWhys.rootCause}
                         onChange={(e) => setFiveWhys((p) => ({ ...p, rootCause: e.target.value }))}
                       />
@@ -473,12 +475,12 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                           marginBottom: 8,
                         }}
                       >
-                        🔧 Acción Correctiva
+                        🔧 {t('rca.corrective_action')}
                       </div>
                       <textarea
                         rows={2}
                         style={inputStyle}
-                        placeholder="Definir la acción correctiva a implementar..."
+                        placeholder={t('rca.corrective_action_placeholder')}
                         value={fiveWhys.correctiveAction}
                         onChange={(e) => setFiveWhys((p) => ({ ...p, correctiveAction: e.target.value }))}
                       />
@@ -510,17 +512,17 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                         {/* Effect box */}
                         <rect x="705" y="100" width="105" height="60" rx="10" fill="rgba(239,68,68,0.1)" stroke="#ef4444" strokeWidth="1.5" />
                         <text x="757" y="126" textAnchor="middle" fill="#ef4444" fontSize="10" fontWeight="700" fontFamily="Inter, sans-serif">
-                          EFECTO
+                          {t('rca.effect')}
                         </text>
                         <text x="757" y="146" textAnchor="middle" fill="#ef4444" fontSize="8" fontWeight="500" fontFamily="Inter, sans-serif" opacity="0.7">
-                          (Problema)
+                          {t('rca.effect_sub')}
                         </text>
 
                         {/* Top branches */}
                         {[
-                          { x: 160, label: 'Mano de Obra', color: '#3b82f6', count: ishikawa.manoDeObra.length },
-                          { x: 360, label: 'Máquina', color: '#f97316', count: ishikawa.maquina.length },
-                          { x: 560, label: 'Método', color: '#8b5cf6', count: ishikawa.metodo.length },
+                          { x: 160, label: t('rca.cat_manpower'), color: '#3b82f6', count: ishikawa.manoDeObra.length },
+                          { x: 360, label: t('rca.cat_machine'), color: '#f97316', count: ishikawa.maquina.length },
+                          { x: 560, label: t('rca.cat_method'), color: '#8b5cf6', count: ishikawa.metodo.length },
                         ].map((b) => (
                           <g key={b.label}>
                             <line x1={b.x} y1="130" x2={b.x - 70} y2="35" stroke={b.color} strokeWidth="1.5" opacity="0.6" />
@@ -537,8 +539,8 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                               </g>
                             )}
                             {/* Sub-branches for causes */}
-                            {(b.label === 'Mano de Obra' ? ishikawa.manoDeObra :
-                              b.label === 'Máquina' ? ishikawa.maquina :
+                            {(b.label === t('rca.cat_manpower') ? ishikawa.manoDeObra :
+                              b.label === t('rca.cat_machine') ? ishikawa.maquina :
                               ishikawa.metodo).slice(0, 3).map((cause: IshikawaCause, ci: number) => {
                                 const fraction = (ci + 1) / 4;
                                 const branchX = b.x - fraction * 70;
@@ -553,9 +555,9 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
 
                         {/* Bottom branches */}
                         {[
-                          { x: 160, label: 'Material', color: '#10b981', count: ishikawa.material.length },
-                          { x: 360, label: 'Medición', color: '#06b6d4', count: ishikawa.medicion.length },
-                          { x: 560, label: 'Medio Amb.', color: '#14b8a6', count: ishikawa.medioAmbiente.length },
+                          { x: 160, label: t('rca.cat_material'), color: '#10b981', count: ishikawa.material.length },
+                          { x: 360, label: t('rca.cat_measurement'), color: '#06b6d4', count: ishikawa.medicion.length },
+                          { x: 560, label: t('rca.cat_environment_short'), color: '#14b8a6', count: ishikawa.medioAmbiente.length },
                         ].map((b) => (
                           <g key={b.label}>
                             <line x1={b.x} y1="130" x2={b.x - 70} y2="225" stroke={b.color} strokeWidth="1.5" opacity="0.6" />
@@ -571,8 +573,8 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                                 </text>
                               </g>
                             )}
-                            {(b.label === 'Material' ? ishikawa.material :
-                              b.label === 'Medición' ? ishikawa.medicion :
+                            {(b.label === t('rca.cat_material') ? ishikawa.material :
+                              b.label === t('rca.cat_measurement') ? ishikawa.medicion :
                               ishikawa.medioAmbiente).slice(0, 3).map((cause: IshikawaCause, ci: number) => {
                                 const fraction = (ci + 1) / 4;
                                 const branchX = b.x - fraction * 70;
@@ -601,14 +603,14 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                       <AlertTriangle size={16} color="#ef4444" />
                       <div>
                         <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                          Efecto / Problema
+                          {t('rca.effect_problem')}
                         </div>
                         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gv-text-heading)', marginTop: 2 }}>
                           [{itemCode}] {itemDesc}
                         </div>
                       </div>
                       <div style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--gv-text-muted)' }}>
-                        {totalCauses} causas registradas
+                        {totalCauses} {t('rca.causes_registered')}
                       </div>
                     </div>
 
@@ -616,6 +618,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
                       {ishikawaCategories.map((cat) => {
                         const causes = ishikawa[cat.key] as IshikawaCause[];
+                        const catLabelKeys: Record<string, string> = { manoDeObra: 'cat_manpower', maquina: 'cat_machine', metodo: 'cat_method', material: 'cat_material', medicion: 'cat_measurement', medioAmbiente: 'cat_environment' };
                         return (
                           <motion.div
                             key={cat.key}
@@ -653,7 +656,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                               >
                                 {cat.icon}
                               </span>
-                              {cat.label}
+                              {t(`rca.${catLabelKeys[cat.key]}`)}
                               {causes.length > 0 && (
                                 <span
                                   style={{
@@ -674,7 +677,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minHeight: 40 }}>
                               {causes.length === 0 && (
                                 <div style={{ fontSize: 11, color: 'var(--gv-text-muted)', fontStyle: 'italic', padding: '8px 0' }}>
-                                  Sin causas registradas
+                                  {t('rca.no_causes')}
                                 </div>
                               )}
                               {causes.map((cause) => (
@@ -735,7 +738,7 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                               <input
                                 type="text"
                                 style={{ ...inputStyle, padding: '7px 10px', fontSize: 12 }}
-                                placeholder="Agregar causa..."
+                                placeholder={t('rca.add_cause')}
                                 value={newCauseText[cat.key] || ''}
                                 onChange={(e) => setNewCauseText((p) => ({ ...p, [cat.key]: e.target.value }))}
                                 onKeyDown={(e) => e.key === 'Enter' && addCause(cat.key)}
@@ -784,12 +787,12 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                             gap: 6,
                           }}
                         >
-                          <CheckCircle2 size={12} /> Causa Raíz
+                          <CheckCircle2 size={12} /> {t('rca.root_cause')}
                         </div>
                         <textarea
                           rows={3}
                           style={inputStyle}
-                          placeholder="Identificar la causa raíz..."
+                          placeholder={t('rca.root_cause_placeholder')}
                           value={ishikawa.rootCause}
                           onChange={(e) => setIshikawa((p) => ({ ...p, rootCause: e.target.value }))}
                         />
@@ -808,12 +811,12 @@ export default function FaultAnalysisDrawer({ open, fault, onClose, onSave }: Fa
                             marginBottom: 8,
                           }}
                         >
-                          🔧 Acción Correctiva
+                          🔧 {t('rca.corrective_action')}
                         </div>
                         <textarea
                           rows={3}
                           style={inputStyle}
-                          placeholder="Acción correctiva a implementar..."
+                          placeholder={t('rca.corrective_action_placeholder')}
                           value={ishikawa.correctiveAction}
                           onChange={(e) => setIshikawa((p) => ({ ...p, correctiveAction: e.target.value }))}
                         />

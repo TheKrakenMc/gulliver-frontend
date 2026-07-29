@@ -1,0 +1,70 @@
+[
+  {
+    "categoria": "Mantenimiento",
+    "motivos": [
+      {
+        "codigo": "DT-MANT-01",
+        "descripcion": "Cambio de Herramental"
+      },
+      {
+        "codigo": "DT-MANT-02",
+        "descripcion": "Ajuste de Máquina"
+      },
+      {
+        "codigo": "DT-MANT-03",
+        "descripcion": "Falta de Refacciones"
+      }
+    ]
+  },
+  {
+    "categoria": "Recursos Humanos",
+    "motivos": [
+      {
+        "codigo": "DT-RRHH-01",
+        "descripcion": "Falta de Personal"
+      },
+      {
+        "codigo": "DT-RRHH-02",
+        "descripcion": "Capacitación de Personal"
+      },
+      {
+        "codigo": "DT-RRHH-03",
+        "descripcion": "Junta Informativa"
+      }
+    ]
+  },
+  {
+    "categoria": "Materiales / Logística",
+    "motivos": [
+      {
+        "codigo": "DT-MAT-01",
+        "descripcion": "Falta de Material (Componentes)"
+      },
+      {
+        "codigo": "DT-MAT-02",
+        "descripcion": "Falta de Empaque"
+      },
+      {
+        "codigo": "DT-MAT-03",
+        "descripcion": "Retraso en Surtido"
+      }
+    ]
+  },
+  {
+    "categoria": "Producción",
+    "motivos": [
+      {
+        "codigo": "DT-PROD-01",
+        "descripcion": "Limpieza de Área"
+      },
+      {
+        "codigo": "DT-PROD-02",
+        "descripcion": "Falta de Programa"
+      },
+      {
+        "codigo": "DT-PROD-03",
+        "descripcion": "Arranque de Turno"
+      }
+    ]
+  }
+]

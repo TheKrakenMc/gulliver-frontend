@@ -2,39 +2,69 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import { login } from '../api/authService';
+import { useGlobalStore } from '../store/globalStore';
 
 interface LoginViewProps {
-  onLogin: (userData: { name: string; dept: string; role: string }) => void;
+  onLogin: (userData: { id: number; employee_number: string; name: string; email: string | null; role: string; dept: string | null }) => void;
 }
 
 export default function LoginView({ onLogin }: LoginViewProps) {
   const { t, i18n } = useTranslation();
-  const [email, setEmail] = useState('');
+
+  // Common fields
+  const [employeeNumber, setEmployeeNumber] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const { setGlobalLoading } = useGlobalStore();
   const [error, setError] = useState('');
 
   const isSpanish = i18n.language === 'es';
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!employeeNumber || !password) {
       setError(t('login.error_empty'));
       return;
     }
 
-    setError('');
-    setLoading(true);
 
-    // Simulate login delay
-    setTimeout(() => {
-      setLoading(false);
+
+    setError('');
+    setGlobalLoading(true, t('login.btn_logging_in'));
+
+    try {
+      let response;
+
+        response = await login({
+          employee_number: employeeNumber,
+          password,
+        });
+
+      // Save JWT token
+      localStorage.setItem('gulliver_token', response.access_token);
+
+      // Pass user data to parent
       onLogin({
-        name: t('user.default_name'),
-        dept: t('user.default_dept'),
-        role: t('user.default_role'),
+        id: response.user.id,
+        employee_number: response.user.employee_number,
+        name: response.user.name,
+        email: response.user.email,
+        role: response.user.role,
+        dept: response.user.dept,
       });
-    }, 1500);
+    } catch (err: any) {
+      const detail = err?.response?.data?.detail;
+      if (detail) {
+        setError(detail);
+      } else if (err?.code === 'ERR_NETWORK') {
+        setError(isSpanish ? 'No se puede conectar al servidor. Verifica que la API esté activa.' : 'Cannot connect to server. Check that the API is running.');
+      } else {
+        setError(isSpanish ? 'Error inesperado. Intenta de nuevo.' : 'Unexpected error. Try again.');
+      }
+    } finally {
+      setGlobalLoading(false);
+    }
   };
 
   const toggleLanguage = () => {
@@ -77,26 +107,24 @@ export default function LoginView({ onLogin }: LoginViewProps) {
             </p>
           </div>
 
-          <form onSubmit={handleLogin} className="flex flex-col gap-8 p-10" style={{ paddingLeft: 20, paddingRight: 20 }}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-8 p-10" style={{ paddingLeft: 20, paddingRight: 20 }}>
             <div className="flex flex-col gap-6">
-              {/* Email Input */}
+              {/* Employee Number Input */}
               <div className="flex flex-col gap-3">
                 <label className="text-[11px] font-black uppercase tracking-[0.2em] text-[var(--gv-text-muted)] px-1">
-                  {t('login.email_label')}
+                  {isSpanish ? 'No. de Empleado' : 'Employee No.'}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-14 pr-12 flex items-center pointer-events-none text-[var(--gv-text-muted)]">
-                    {/* Fixed absolute container for icons to avoid layout shift */}
                   </div>
-                  {/* <Mail className="absolute left-[-10px] top-1/2 -translate-y-1/2 text-[var(--gv-text-muted)]" size={20} /> */}
                   <input
                     type="number"
                     inputMode="numeric"
                     required
-                    value={email}
+                    value={employeeNumber}
                     onChange={(e) => {
                       const val = e.target.value.slice(0, 8);
-                      setEmail(val);
+                      setEmployeeNumber(val);
                     }}
                     style={{
                       padding: 10
@@ -106,6 +134,8 @@ export default function LoginView({ onLogin }: LoginViewProps) {
                   />
                 </div>
               </div>
+
+
 
               {/* Password Input */}
               <div className="flex flex-col gap-3">
@@ -118,7 +148,6 @@ export default function LoginView({ onLogin }: LoginViewProps) {
                   </button>
                 </div>
                 <div className="relative">
-                  {/* <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gv-text-muted)]" size={20} /> */}
                   <input
                     type="password"
                     required
@@ -133,7 +162,7 @@ export default function LoginView({ onLogin }: LoginViewProps) {
                 </div>
               </div>
 
-              {/* Options */}
+              {/* Remember me (login only) */}
               <div className="flex items-center gap-3 px-1">
                 <input type="checkbox" id="remember" className="w-5 h-5 rounded border-[var(--gv-border)] text-[var(--gv-primary)] focus:ring-[var(--gv-primary)] cursor-pointer" />
                 <label htmlFor="remember" className="text-sm font-bold text-[var(--gv-text)] cursor-pointer select-none">
@@ -157,27 +186,21 @@ export default function LoginView({ onLogin }: LoginViewProps) {
               )}
             </AnimatePresence>
 
-            {/* Login Button */}
+            {/* Submit Button */}
             <motion.button
               type="submit"
-              disabled={loading}
               whileHover={{ scale: 1.02, boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.4)' }}
               whileTap={{ scale: 0.98 }}
-              className="w-full h-[50px] py-5 rounded-lg font-black text-white shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed group"
+              className="w-full h-[50px] py-5 rounded-lg font-black text-white shadow-xl transition-all flex items-center justify-center gap-3 group"
               style={{ background: 'linear-gradient(135deg, var(--gv-primary), var(--gv-primary-hover))' }}
             >
-              {loading ? (
-                <>
-                  <Loader2 size={24} className="animate-spin" />
-                  <span className="tracking-wide uppercase">{t('login.btn_logging_in')}</span>
-                </>
-              ) : (
-                <>
-                  <LogIn size={24} className="group-hover:translate-x-1 transition-transform" />
-                  <span className="tracking-widest uppercase text-lg">{t('login.btn_login')}</span>
-                </>
-              )}
+              <LogIn size={24} className="group-hover:translate-x-1 transition-transform" />
+              <span className="tracking-widest uppercase text-lg">
+                {t('login.btn_login')}
+              </span>
             </motion.button>
+
+
           </form>
 
           {/* Language Switcher on Login */}

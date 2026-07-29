@@ -4,6 +4,8 @@ import { initReactI18next } from 'react-i18next';
 import enTranslation from './locales/en.json';
 import esTranslation from './locales/es.json';
 
+const savedLanguage = localStorage.getItem('gv_language') || 'es';
+
 i18n
   .use(initReactI18next)
   .init({
@@ -15,7 +17,7 @@ i18n
         translation: esTranslation,
       },
     },
-    lng: 'es', // Default language
+    lng: savedLanguage, // Read from local storage
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // React already does escaping
