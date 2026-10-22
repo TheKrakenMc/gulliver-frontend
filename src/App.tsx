@@ -1,98 +1,47 @@
-import { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import Sidebar from './components/Sidebar';
-import GlobalFilterBar from './components/GlobalFilterBar';
-import DashboardView from './components/DashboardView';
-import HourByHourView from './components/HourByHourView';
-import MaintenanceView from './components/MaintenanceView';
-import QualityView from './components/QualityView';
-import LogisticsView from './components/LogisticsView';
-import PDCAView from './components/PDCAView';
-import LoginView from './components/LoginView';
-import PLMView from './components/plm/PLMView';
-import ConfigurationView from './components/ConfigurationView';
-import type { ViewId, FilterState, PlanRecord } from './types';
-import { filterOptions } from './data/mockData';
-import { useGlobalStore } from './store/globalStore';
-import GlobalLoader from './components/GlobalLoader';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import ErrorBoundary from './industrial/ErrorBoundary';
+import type { User } from './industrial/types';
+import { signIn, signOut, errorMessage } from './industrial/api';
+import './industrial/industrial.css';
 
-const defaultPlanRecords: PlanRecord[] = [];
-
+const Workspace = lazy(() => import('./industrial/Workspace'));
+function initialUser(): User | null {
+  try {
+    const user = JSON.parse(localStorage.getItem('gulliver_auth_session') || 'null');
+    return user && typeof user.id === 'number' && typeof user.name === 'string' && typeof user.role === 'string' ? user : null;
+  } catch { return null; }
+}
 export default function App() {
-  const [activeView, setActiveView] = useState<ViewId>('dashboard');
-  const [darkMode, setDarkMode] = useState(false);
-  const [filters, setFilters] = useState<FilterState>({
-    location: filterOptions.locations[0],
-    businessUnit: filterOptions.businessUnits[0],
-    process: filterOptions.processes[0],
-  });
-
-  const { isAuthenticated, userSession, setUserSession, fetchHierarchy } = useGlobalStore();
-
-  // Load hierarchy on mount if authenticated
+  const [user, setUser] = useState<User | null>(initialUser);
+  const [employee, setEmployee] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchHierarchy();
-    }
-  }, [isAuthenticated, fetchHierarchy]);
-
-  // Shared state: Logistics planning → HourByHour target
-  const [planRecords, setPlanRecords] = useState<PlanRecord[]>(defaultPlanRecords);
-
-  // Derive target from first plan record (simulates feeding data)
-  const planTarget = planRecords.length > 0 ? planRecords[0].target_hr : 60;
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-  }, [darkMode]);
-
-  const handleFilterChange = (key: keyof FilterState, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleLogin = (userData: { id: number; employee_number: string; name: string; email: string | null; role: string; dept: string | null }) => {
-    setUserSession(userData);
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <>
-        <GlobalLoader />
-        <LoginView onLogin={handleLogin} />
-      </>
-    );
+    const changed = (event: StorageEvent) => {
+      if (event.key === 'gulliver_auth_session') setUser(initialUser());
+    };
+    window.addEventListener('storage', changed);
+    return () => window.removeEventListener('storage', changed);
+  }, []);
+  async function login(event: React.FormEvent) {
+    event.preventDefault(); setError(''); setBusy(true);
+    try {
+      const identity = await signIn(employee, password);
+      setUser(identity); setPassword('');
+    } catch(e) { setError(errorMessage(e)); }
+    finally { setBusy(false); }
   }
-
-  return (
-    <>
-      <GlobalLoader />
-      <Sidebar 
-        activeView={activeView} 
-        onNavigate={setActiveView} 
-        darkMode={darkMode}
-        onToggleDarkMode={() => setDarkMode(!darkMode)}
-      />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', overflow: 'hidden' }}>
-        <GlobalFilterBar
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          darkMode={darkMode}
-          onToggleDarkMode={() => setDarkMode(!darkMode)}
-          singleDateOnly={activeView === 'hourByHour'}
-        />
-        <main style={{ flex: 1, overflow: 'auto' }}>
-          <AnimatePresence mode="wait">
-            {activeView === 'dashboard' && <DashboardView key="dashboard" filters={filters} />}
-            {activeView === 'hourByHour' && <HourByHourView key="hourByHour" filters={filters} planTarget={planTarget} />}
-            {activeView === 'maintenance' && <MaintenanceView key="maintenance" />}
-            {activeView === 'quality' && <QualityView key="quality" />}
-            {activeView === 'logistics' && <LogisticsView key="logistics" filters={filters} planRecords={planRecords} onUpdatePlanRecords={setPlanRecords} user={userSession!} />}
-            {activeView === 'pdca' && <PDCAView key="pdca" />}
-            {activeView === 'engineering' && <PLMView key="engineering" filters={filters} />}
-            {activeView === 'configuration' && <ConfigurationView key="configuration" filters={filters} />}
-          </AnimatePresence>
-        </main>
-      </div>
-    </>
-  );
+  async function logout() { await signOut(); setUser(null); }
+  if(user) return <ErrorBoundary><Suspense fallback={<div className="industrial loading" role="status">Cargando tu espacio de trabajo…</div>}><Workspace key={user.id} user={user} onLogout={logout}/></Suspense></ErrorBoundary>;
+  return <div className="industrial login-page"><main className="login-panel">
+    <h1>Gulliver</h1><p>Registro de producción</p>
+    <form onSubmit={login}>
+      <label>Número de empleado<input autoComplete="username" required maxLength={8} value={employee} onChange={e=>setEmployee(e.target.value)}/></label>
+      <label>Contraseña<input type="password" autoComplete="current-password" required maxLength={128} value={password} onChange={e=>setPassword(e.target.value)}/></label>
+      {error && <p role="alert" className="notice error">{error}</p>}
+      <button className="primary" disabled={busy}>{busy?'Iniciando sesión…':'Iniciar sesión'}</button>
+    </form>
+    <p>Inicia sesión con conexión para preparar tu turno. Las capturas pendientes se conservan al cerrar sesión.</p>
+  </main></div>;
 }

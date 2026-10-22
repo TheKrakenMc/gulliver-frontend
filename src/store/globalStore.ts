@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { format } from 'date-fns';
-import type { PlanRecord, HierarchyLocation, HierarchyBusinessUnit, HierarchyProcess, HierarchyProduct } from '../types';
+import type { HierarchyLocation } from '../types';
 import { baseDataApi } from '../api/baseDataApi';
 
 export interface UserSession {

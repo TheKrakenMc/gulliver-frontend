@@ -714,8 +714,6 @@ export function computePareto(input: ParetoInput): ParetoLevel[] {
     // Nivel 5 — Fallas (en minutos, para contexto)
     const qualMachines = collectQualifiedFromLevel(levels, 4);
     qualMachines.forEach(({ parentLabel: linea, label: machine }) => {
-      const ctx2 = qualLines.find((q) => q.label === linea);
-      const ctxNave = ctx2 ? qualNaves.find((q) => q.nave === ctx2.parentLabel) : null;
       const sub = incidents.filter(
         (i) => i.machine === machine && i.linea === linea,
       );

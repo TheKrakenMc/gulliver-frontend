@@ -64,7 +64,7 @@ function DocTypeBadge({ type }: { type: TechnicalDocType }) {
   );
 }
 
-export default function ProductsTab({ products, onUpdateProducts, filters }: ProductsTabProps) {
+export default function ProductsTab({ products, onUpdateProducts }: ProductsTabProps) {
   const { i18n } = useTranslation();
   const { t } = useTranslation();
   const lang = i18n.language;

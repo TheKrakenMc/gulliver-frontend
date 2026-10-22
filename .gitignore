@@ -134,3 +134,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+.e2e/
+test-results/
+playwright-report/
+baseline-*.json
+implementation-*.json
+
+final-audit.json

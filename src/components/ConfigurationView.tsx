@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Settings, Plus, Activity, Box, Building2, Users, Pencil, Trash2, X, Tag, Wrench, AlertTriangle, Layers, Loader2 } from 'lucide-react';
+import { Settings, Plus, Activity, Box, Building2, Users, Trash2, X, Tag, Wrench, Layers, Loader2 } from 'lucide-react';
 import Toast, { type ToastType } from './Toast';
 import { useTranslation } from 'react-i18next';
 import { useGlobalStore } from '../store/globalStore';
 import { baseDataApi } from '../api/baseDataApi';
-import type { 
-  BaseProcess, BaseProduct, BaseSector, BaseClient, ClientWithSector, 
-  BaseMachine, BaseMaintenanceCategory, BaseMaintenanceFault, FilterState,
-  BaseAssetFamily, BaseAssetFault, BaseScrapDefect
+import type {
+  BaseProduct, BaseSector, ClientWithSector,
+  BaseMachine, BaseMaintenanceCategory, FilterState,
+  BaseAssetFamily, BaseScrapDefect
 } from '../types';
 
 type TabId = 'processes' | 'machines' | 'maintenance_categories' | 'asset_families' | 'scrap_defects' | 'products' | 'sectors' | 'clients';
@@ -61,14 +61,14 @@ export default function ConfigurationView({ filters }: ConfigurationViewProps) {
   const [clients, setClients] = useState<ClientWithSector[]>([]);
   const [allProducts, setAllProducts] = useState<BaseProduct[]>([]);
   const [allMachines, setAllMachines] = useState<BaseMachine[]>([]);
-  
+
   // ── Machine Sub-catalogs State ──
   const [allMaintenanceCategories, setAllMaintenanceCategories] = useState<BaseMaintenanceCategory[]>([]);
   const [allAssetFamilies, setAllAssetFamilies] = useState<BaseAssetFamily[]>([]);
   const [formFamilyIds, setFormFamilyIds] = useState<string[]>([]);
-  const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [addingFaultToCatId, setAddingFaultToCatId] = useState<string | null>(null);
+  const [, setIsAddingCategory] = useState(false);
+  const [, setNewCategoryName] = useState('');
+  const [, setAddingFaultToCatId] = useState<string | null>(null);
   const [newFaultCode, setNewFaultCode] = useState('');
   const [newFaultDesc, setNewFaultDesc] = useState('');
   const [allScrapDefects, setAllScrapDefects] = useState<BaseScrapDefect[]>([]);
@@ -127,23 +127,23 @@ export default function ConfigurationView({ filters }: ConfigurationViewProps) {
   };
 
   // Derived lists based on Location filter
-  const filteredHierarchy = filters?.location 
+  const filteredHierarchy = filters?.location
     ? hierarchy.filter(l => l.name === filters.location)
     : hierarchy;
   const allBUs = filteredHierarchy.flatMap(l => l.business_units || []);
-  
-  let selectedBUObj = filters?.businessUnit 
-    ? allBUs.find(bu => bu.name === filters.businessUnit) 
+
+  let selectedBUObj = filters?.businessUnit
+    ? allBUs.find(bu => bu.name === filters.businessUnit)
     : undefined;
-    
+
   if (!selectedBUObj && allBUs.length > 0) {
     selectedBUObj = allBUs[0];
   }
-    
+
   const selectedBUId = selectedBUObj?.id || '';
   const processes = selectedBUObj?.processes || [];
   const processIds = processes.map(p => p.id);
-  
+
   const productsForBU = allProducts.filter(p =>
     p.process_ids.some(pid => processIds.includes(pid))
   );
@@ -289,28 +289,7 @@ export default function ConfigurationView({ filters }: ConfigurationViewProps) {
   // ═══════════════════════════════════════════════════
   //  SUBCATALOG HANDLERS (Categories & Faults)
   // ═══════════════════════════════════════════════════
-  const handleAddCategory = async () => {
-    if (!newCategoryName.trim()) return;
-    try {
-      await baseDataApi.createMaintenanceCategory({ name: newCategoryName });
-      setNewCategoryName('');
-      setIsAddingCategory(false);
-      await loadAllMaintenanceCategories();
-    } catch (e: any) {
-      console.error(e);
-      alert(e?.response?.data?.detail || 'Error');
-    }
-  };
 
-  const handleDeleteCategory = async (catId: string) => {
-    try {
-      await baseDataApi.deleteMaintenanceCategory(catId);
-      await loadAllMaintenanceCategories();
-    } catch (e: any) {
-      console.error(e);
-      alert(e?.response?.data?.detail || 'Error');
-    }
-  };
 
   const handleAddFault = async (catId: string) => {
     if (!newFaultCode.trim() || !newFaultDesc.trim()) return;
@@ -337,28 +316,7 @@ export default function ConfigurationView({ filters }: ConfigurationViewProps) {
     }
   };
 
-  const handleAddFamily = async () => {
-    if (!newCategoryName.trim()) return;
-    try {
-      await baseDataApi.createAssetFamily({ name: newCategoryName });
-      setNewCategoryName('');
-      setIsAddingCategory(false);
-      await loadAllAssetFamilies();
-    } catch (e: any) {
-      console.error(e);
-      alert(e?.response?.data?.detail || 'Error');
-    }
-  };
 
-  const handleDeleteFamily = async (famId: string) => {
-    try {
-      await baseDataApi.deleteAssetFamily(famId);
-      await loadAllAssetFamilies();
-    } catch (e: any) {
-      console.error(e);
-      alert(e?.response?.data?.detail || 'Error');
-    }
-  };
 
   const handleAddAssetFault = async (famId: string) => {
     if (!newFaultCode.trim() || !newFaultDesc.trim()) return;
@@ -434,7 +392,7 @@ export default function ConfigurationView({ filters }: ConfigurationViewProps) {
     setIsAdding(true);
     setFormName(entity.name || '');
     setFormDesc(entity.description || '');
-    
+
     if (activeTab === 'machines') {
       setFormMachineCode(entity.code || '');
       setFormNave(entity.nave || '');
@@ -505,9 +463,6 @@ export default function ConfigurationView({ filters }: ConfigurationViewProps) {
   };
   const selectFormStyle: React.CSSProperties = {
     ...inputStyle, appearance: 'none' as const, cursor: 'pointer',
-  };
-  const selectStyle: React.CSSProperties = {
-    ...inputStyle, appearance: 'none' as const, cursor: 'pointer', maxWidth: 320, paddingRight: 32,
   };
   const labelSt: React.CSSProperties = {
     display: 'block', fontSize: 10, fontWeight: 700, color: 'var(--gv-text-muted)',
@@ -713,10 +668,10 @@ export default function ConfigurationView({ filters }: ConfigurationViewProps) {
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             {(() => {
-                              const procDefects = editingId 
+                              const procDefects = editingId
                                 ? allScrapDefects.filter(d => d.process_id === editingId)
                                 : pendingScrapDefects;
-                                
+
                               if (procDefects.length === 0) {
                                 return <p style={{ fontSize: 12, color: 'var(--gv-text-muted)', fontStyle: 'italic', textAlign: 'center', margin: '10px 0' }}>Sin defectos registrados.</p>;
                               }
@@ -1156,7 +1111,7 @@ export default function ConfigurationView({ filters }: ConfigurationViewProps) {
                 </div>
               </motion.div>
             ))}
-            
+
             {/* ── ASSET FAMILIES ── */}
             {activeTab === 'asset_families' && allAssetFamilies.map((fam, i) => (
               <motion.div

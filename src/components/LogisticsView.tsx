@@ -13,7 +13,6 @@ import {
   Clock,
   Pencil,
   X,
-  Edit3,
   Settings,
 } from "lucide-react";
 import type { PlanRecord, FilterState, TurnoType } from "../types";
@@ -39,7 +38,7 @@ interface LogisticsViewProps {
   filters: FilterState;
   planRecords: PlanRecord[];
   onUpdatePlanRecords: (records: PlanRecord[]) => void;
-  user: { name: string; dept: string; role: string } | null;
+  user: { name: string; dept: string | null; role: string } | null;
 }
 
 export default function LogisticsView({
@@ -1328,24 +1327,6 @@ export default function LogisticsView({
                     filteredHistory.map((record) => {
                       const shiftCfg =
                         TURNO_CONFIG[record.turno] || TURNO_CONFIG["Matutino"];
-                      const statusColors = {
-                        published: {
-                          bg: "rgba(16,185,129,0.1)",
-                          color: "#10b981",
-                          border: "rgba(16,185,129,0.2)",
-                        },
-                        cancelled: {
-                          bg: "rgba(239,68,68,0.1)",
-                          color: "#ef4444",
-                          border: "rgba(239,68,68,0.2)",
-                        },
-                        draft: {
-                          bg: "var(--gv-surface-alt)",
-                          color: "var(--gv-text-muted)",
-                          border: "var(--gv-border)",
-                        },
-                      };
-                      const sColor = statusColors[record.status];
 
                       return (
                         <tr key={record.id_plan} className="group">

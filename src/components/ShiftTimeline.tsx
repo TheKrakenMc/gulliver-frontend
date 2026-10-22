@@ -3,13 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
   CheckCircle2,
-  AlertTriangle,
   Clock,
   ClipboardList,
-  Wrench,
-  Layers,
-  Info
-} from "lucide-react";
+  Layers} from "lucide-react";
 import type { HourRecord, FaultRecord, ScrapRecord } from "../types";
 
 interface ShiftTimelineProps {
@@ -34,10 +30,6 @@ const ShiftTimeline = memo(function ShiftTimeline({
   planTarget,
   totals,
   efficiency,
-  scrapRate,
-  allFaults,
-  allScrap,
-  shiftStatus,
   activeHourIndex,
   onHourActive,
 }: ShiftTimelineProps) {
@@ -215,7 +207,7 @@ const ShiftTimeline = memo(function ShiftTimeline({
 
         {/* Hours labels row */}
         <div className="flex w-full mb-2 px-1 relative z-10">
-          {records.map((r, i) => (
+          {records.map((_r, i) => (
             <div key={`label-${i}`} className="flex-1 text-center">
               <span style={{ fontSize: 16, fontWeight: 800, color: "var(--gv-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                 H{i + 1}

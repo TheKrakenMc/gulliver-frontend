@@ -9,8 +9,7 @@
  * - localStorage persistence for frequently-queried data (plans, operative records)
  */
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { PlanRecord, HourRecord, FaultRecord, ScrapRecord, DowntimeRecord } from '../types';
+import type { PlanRecord, HourRecord } from '../types';
 import {
   getLogisticPlans,
   getHourRecords,
@@ -33,13 +32,18 @@ const HISTORY_TTL_MS = 300_000; // 5 minutes for historical data
 
 /* ── Inflight Deduplication Map ── */
 const inflightRequests = new Map<string, Promise<any>>();
+let cacheEpoch = 0;
+const MAX_CACHE_ENTRIES = 32;
+function boundedCache<T>(cache: Record<string, CacheEntry<T>>) {
+  return Object.fromEntries(Object.entries(cache).sort((a,b)=>b[1].timestamp-a[1].timestamp).slice(0,MAX_CACHE_ENTRIES));
+}
 
 function deduplicatedFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
   const existing = inflightRequests.get(key);
   if (existing) return existing as Promise<T>;
 
   const promise = fetcher().finally(() => {
-    inflightRequests.delete(key);
+    if(inflightRequests.get(key) === promise) inflightRequests.delete(key);
   });
   inflightRequests.set(key, promise);
   return promise;
@@ -47,7 +51,8 @@ function deduplicatedFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T
 
 /* ── Cache Key Builders ── */
 function makeDateKey(prefix: string, startDate: string, endDate: string): string {
-  return `${prefix}:${startDate}:${endDate}`;
+  const session = JSON.parse(localStorage.getItem('gulliver_auth_session') || 'null');
+  return [session?.id || 'anonymous', session?.role || '', prefix, startDate, endDate].join(':');
 }
 
 /* ── Check if a date range is "today" ── */
@@ -106,7 +111,6 @@ interface ProductionState {
 
 /* ── Create the Store ── */
 export const useProductionStore = create<ProductionState>()(
-  persist(
     (set, get) => {
       /* ── Generic cache-aware fetcher with SWR ── */
       function createCacheFetcher<T>(
@@ -115,6 +119,7 @@ export const useProductionStore = create<ProductionState>()(
         apiFn: (startDate: string, endDate: string) => Promise<T[]>,
       ) {
         return async (startDate: string, endDate: string, opts?: { force?: boolean }): Promise<T[]> => {
+          const epoch = cacheEpoch;
           const key = makeDateKey(prefix, startDate, endDate);
           const ttl = getTTL(startDate);
           const state = get();
@@ -130,11 +135,12 @@ export const useProductionStore = create<ProductionState>()(
           if (!opts?.force && entry) {
             // Fire background refresh (no await — fire-and-forget)
             deduplicatedFetch(key, () => apiFn(startDate, endDate)).then((freshData) => {
+              if(epoch !== cacheEpoch) return;
               set((s) => ({
-                [cacheField]: {
+                [cacheField]: boundedCache({
                   ...(s[cacheField] as Record<string, CacheEntry<T[]>>),
                   [key]: { data: freshData, timestamp: Date.now(), key },
-                },
+                }),
               }));
             }).catch((err) => {
               console.warn(`[ProductionStore] Background refresh failed for ${key}:`, err);
@@ -144,11 +150,12 @@ export const useProductionStore = create<ProductionState>()(
 
           // 3) Cache MISS — fetch and wait
           const data = await deduplicatedFetch(key, () => apiFn(startDate, endDate));
+          if(epoch !== cacheEpoch) return data;
           set((s) => ({
-            [cacheField]: {
+            [cacheField]: boundedCache({
               ...(s[cacheField] as Record<string, CacheEntry<T[]>>),
               [key]: { data, timestamp: Date.now(), key },
-            },
+            }),
           }));
           return data;
         };
@@ -187,6 +194,7 @@ export const useProductionStore = create<ProductionState>()(
 
         /* ── Cache Invalidation ── */
         invalidateCache: (type) => {
+          cacheEpoch++; inflightRequests.clear();
           if (type === 'all') {
             set({
               plansCache: {},
@@ -210,12 +218,13 @@ export const useProductionStore = create<ProductionState>()(
         },
 
         invalidateByDateRange: (startDate, endDate) => {
-          const suffixToMatch = `:${startDate}:${endDate}`;
+          cacheEpoch++; inflightRequests.clear();
           set((s) => {
             const cleanCache = <T>(cache: Record<string, CacheEntry<T>>): Record<string, CacheEntry<T>> => {
               const cleaned: Record<string, CacheEntry<T>> = {};
               for (const [k, v] of Object.entries(cache)) {
-                if (!k.endsWith(suffixToMatch)) cleaned[k] = v;
+                const [cachedStart,cachedEnd] = k.split(':').slice(-2);
+                if (cachedEnd < startDate || cachedStart > endDate) cleaned[k] = v;
               }
               return cleaned;
             };
@@ -243,11 +252,5 @@ export const useProductionStore = create<ProductionState>()(
           return { entries, inflight: inflightRequests.size };
         },
       };
-    },
-    {
-      name: 'gulliver-production-cache-v2',
-      // We removed operativeCache and plansCache to prevent stale FK constraint errors after a DB reset
-      partialize: (state) => ({}),
     }
-  )
 );

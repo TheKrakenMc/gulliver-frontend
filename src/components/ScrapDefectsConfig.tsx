@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X, Trash2, Edit2, AlertTriangle, Activity } from 'lucide-react';
+import { Plus, X, Trash2, AlertTriangle, Activity } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { baseDataApi } from '../api/baseDataApi';
 import type { BaseScrapDefect, BaseProcess } from '../types';
@@ -117,7 +117,7 @@ export default function ScrapDefectsConfig({ processes }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {toast?.visible && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {toast?.visible && <Toast visible message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: 'var(--gv-text-heading)' }}>

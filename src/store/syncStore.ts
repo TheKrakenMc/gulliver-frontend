@@ -23,7 +23,7 @@ export type OfflineAction =
 
 interface SyncState {
   offlineQueue: OfflineAction[];
-  enqueueAction: (action: Omit<OfflineAction, 'id' | 'timestamp'>) => void;
+  enqueueAction: (action: (Omit<Extract<OfflineAction, {type: 'CREATE_HOUR_RECORD'}>, 'id' | 'timestamp'> | Omit<Extract<OfflineAction, {type: 'FINISH_SHIFT'}>, 'id' | 'timestamp'>)) => void;
   dequeueAction: (id: string) => void;
   clearQueue: () => void;
 }

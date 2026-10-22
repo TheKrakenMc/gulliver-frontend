@@ -1,3 +1,4 @@
+import type { PlanRecord } from '../types';
 import {
   useState,
   useMemo,
@@ -6,7 +7,6 @@ import {
   useRef,
   memo,
   useOptimistic,
-  startTransition,
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -28,9 +28,7 @@ import {
   BadgeCheck,
   ShieldAlert,
   X,
-  Eye,
   ShieldCheck,
-  Layers,
   Trash2,
   Edit3,
 } from "lucide-react";
@@ -41,13 +39,11 @@ import type {
   ScrapRecord,
   ValidationStatus,
 } from "../types";
-import scrapCatalog from "../utils/Failures_SCRAP.json";
 import { baseDataApi } from "../api/baseDataApi";
 import type {
   BaseMachine,
   BaseMaintenanceCategory,
   DowntimeRecord,
-  ScrapCatalog,
   BaseAssetFamily,
   BaseProcess,
   BaseScrapDefect
@@ -56,7 +52,6 @@ import FaultAnalysisDrawer from "./FaultAnalysisDrawer";
 import ShiftTimeline from "./ShiftTimeline";
 import {
   createHourRecord,
-  updateHourRecord,
   updateOperativeRecordStatus,
 } from "../api/productionService";
 import axiosClient from "../api/axiosClient";
@@ -66,8 +61,6 @@ import { useProductionStore } from "../store/productionStore";
 import { useGlobalStore } from "../store/globalStore";
 import { useLocalShiftStore } from "../store/localShiftStore";
 
-const catalog = scrapCatalog as ScrapCatalog;
-const technologies = Object.keys(catalog);
 
 const getCatalogTranslation = (t: any, text: string) => {
   if (!text) return text;
@@ -108,7 +101,7 @@ const ScrapRegistrationModal = memo(function ScrapRegistrationModal({
   
   const [processes, setProcesses] = useState<BaseProcess[]>([]);
   const [allDefects, setAllDefects] = useState<BaseScrapDefect[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
+  const [, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [selTech, setSelTech] = useState("");
@@ -155,25 +148,7 @@ const ScrapRegistrationModal = memo(function ScrapRegistrationModal({
   const currentDefect = defects.find((d) => d.code === selDefect);
   const isValid = selTech && selDefect && cantidad > 0;
 
-  const selectStyle: React.CSSProperties = {
-    appearance: "none",
-    width: "100%",
-    padding: "10px 36px 10px 14px",
-    background: "var(--gv-surface-alt)",
-    border: "1px solid var(--gv-border)",
-    borderRadius: 8,
-    color: "var(--gv-text-heading)",
-    fontSize: 13,
-    fontWeight: 500,
-    fontFamily: "inherit",
-    cursor: "pointer",
-  };
 
-  const techColors: Record<string, string> = {
-    Inyeccion: "#3b82f6",
-    Termoformado: "#8b5cf6",
-    Corte: "#f59e0b",
-  };
 
   return (
     <div
@@ -816,7 +791,7 @@ const DowntimeRegistrationModal = memo(function DowntimeRegistrationModal({
           if (code) {
              for (const c of cats) {
                 const f = c.faults?.find((x: any) => x.code === code || x.codigo === code);
-                if (f) { foundCat = c.id; foundFault = f.code || f.codigo; break; }
+                if (f) { foundCat = c.id; foundFault = f.code; break; }
              }
           }
           if (foundCat) setSelCategory(foundCat);
@@ -850,19 +825,6 @@ const DowntimeRegistrationModal = memo(function DowntimeRegistrationModal({
   
   const isValid = Boolean(selCategory && selFault && (!isMachineRequired || selMachine) && typeof durationMin === "number" && durationMin > 0);
 
-  const selectStyle: React.CSSProperties = {
-    appearance: "none",
-    width: "100%",
-    padding: "10px 36px 10px 14px",
-    background: "var(--gv-surface-alt)",
-    border: "1px solid var(--gv-border)",
-    borderRadius: 8,
-    color: "var(--gv-text-heading)",
-    fontSize: 13,
-    fontWeight: 500,
-    fontFamily: "inherit",
-    cursor: "pointer",
-  };
 
   return (
     <div
@@ -1844,7 +1806,6 @@ export default function HourByHourView({
   const [shiftStatus, setShiftStatus] = useState<"active" | "finished">(
     "active",
   );
-  const [isFinishingShift, setIsFinishingShift] = useState(false);
   const [isAddingRow, setIsAddingRow] = useState(false);
   const [selectedHourIndex, setSelectedHourIndex] = useState<number | null>(null);
 
@@ -2647,17 +2608,9 @@ export default function HourByHourView({
     () => Object.values(scrapByHour).flat(),
     [scrapByHour],
   );
-  const allDT = useMemo(
-    () => Object.values(downtimeByHour).flat(),
-    [downtimeByHour],
-  );
   const totalScrapPieces = useMemo(
     () => allScrap.reduce((acc, s) => acc + s.cantidad, 0),
     [allScrap],
-  );
-  const totalDowntimeMin = useMemo(
-    () => allDT.reduce((acc, dt) => acc + dt.durationMin, 0),
-    [allDT],
   );
 
   const enrichedOptimisticRecords = useMemo(() => {
@@ -3279,8 +3232,6 @@ export default function HourByHourView({
                       const isCurrentHour =
                         index === optimisticRecords.length - 1 &&
                         record.actualOK === 0;
-                      const pctOK =
-                        record.effectiveTarget > 0 ? record.actualOK / record.effectiveTarget : 0;
                       const rowDT = downtimeByHour[index] || [];
                       const rowFaults = faultsByHour[index] || [];
                       const rowScrap = scrapByHour[index] || [];

@@ -27,7 +27,7 @@ const FOCUS_OPTIONS: { key: AnalysisFocus; icon: React.ReactNode; color: string 
   { key: 'MTBF', icon: <Activity size={16} />, color: '#3b82f6' },
 ];
 
-export default function ParetoAnalysis({ filters }: ParetoAnalysisProps) {
+export default function ParetoAnalysis({ }: ParetoAnalysisProps) {
   const { t } = useTranslation();
   const { globalDateRange, hierarchy } = useGlobalStore();
   const { fetchPlans, fetchHourRecords, fetchFaults, fetchScrap, fetchDowntime } =

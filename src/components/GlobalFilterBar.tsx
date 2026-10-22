@@ -1,5 +1,5 @@
-import { ChevronDown, Bell, LogOut, User as UserIcon, Calendar, Menu, Settings, Building2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, Menu, Building2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { FilterState } from '../types';
 import { useGlobalStore } from '../store/globalStore';
@@ -18,13 +18,10 @@ interface GlobalFilterBarProps {
 export default function GlobalFilterBar({
   filters,
   onFilterChange,
-  darkMode,
-  onToggleDarkMode,
   singleDateOnly,
 }: GlobalFilterBarProps) {
-  const { t, i18n } = useTranslation();
-  const { userSession, logout, globalDateRange, setDateRange, notifications, clearNotifications, toggleMobileDrawer, hierarchy } = useGlobalStore();
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { t } = useTranslation();
+  const { toggleMobileDrawer, hierarchy } = useGlobalStore();
   const [isHierarchyModalOpen, setIsHierarchyModalOpen] = useState(false);
 
   // Dynamic Lists — 3 levels: Location > BusinessUnit > Process
@@ -67,13 +64,7 @@ export default function GlobalFilterBar({
     }
   }, [hierarchy, filters, onFilterChange]);
 
-  const isSpanish = i18n.language === 'es';
 
-  const toggleLanguage = () => {
-    const newLang = isSpanish ? 'en' : 'es';
-    i18n.changeLanguage(newLang);
-    localStorage.setItem('gv_language', newLang);
-  };
 
   const [isTablet, setIsTablet] = useState(false);
   useEffect(() => {

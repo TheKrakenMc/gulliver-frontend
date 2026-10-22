@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Activity, BarChart3, TrendingUp, TrendingDown, Clock, AlertTriangle, CheckCircle, PackageX } from 'lucide-react';
 import { useGlobalStore } from '../store/globalStore';
-import { getLogisticPlans, getHourRecords, getFaultRecords, getScrapRecords } from '../api/productionService';
+import { getLogisticPlans, getHourRecords } from '../api/productionService';
 import type { FilterState, PlanRecord, HourRecord } from '../types';
 import {
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LineChart, Line, ComposedChart, Cell, ReferenceLine, LabelList
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Line, ComposedChart, Cell, ReferenceLine, LabelList
 } from 'recharts';
 import { parseISO, format, subDays, differenceInDays } from 'date-fns';
 import { Day24hTimeline } from './Day24hTimeline';
@@ -26,7 +26,6 @@ interface ModernKPICardProps {
 
 function ModernKPICard({ title, value, unit, trend, trendLabel, icon, color, delay = 0 }: ModernKPICardProps) {
   const isPositive = trend && trend >= 0;
-  const isNegative = trend && trend < 0;
   
   // Map our generic color to a status
   const statusColors: Record<string, { bg: string, border: string, text: string }> = {

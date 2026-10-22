@@ -14,7 +14,7 @@ interface SPCChartProps {
 export default function SPCChart({ data }: SPCChartProps) {
   const { t } = useTranslation();
 
-  const { mean, stdDev, ucl, lcl } = useMemo(() => {
+  const { mean, ucl, lcl } = useMemo(() => {
     if (data.length === 0) return { mean: 0, stdDev: 0, ucl: 0, lcl: 0 };
     
     const sum = data.reduce((acc, pt) => acc + pt.value, 0);

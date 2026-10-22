@@ -1,3 +1,4 @@
+import type { BaseMaintenanceFault } from '../types';
 import axiosClient from './axiosClient';
 import type {
   HierarchyLocation,
@@ -8,18 +9,18 @@ import type {
 } from '../types';
 
 export const baseDataApi = {
-  // ── Cache for UI Optimization ──
+  // â”€â”€ Cache for UI Optimization â”€â”€
   getCachedMachines: () => (window as any)._gulliverMachinesCache || null,
   getCachedCategories: () => (window as any)._gulliverCategoriesCache || null,
   getCachedAssetFamilies: () => (window as any)._gulliverAssetFamiliesCache || null,
 
-  // ── Hierarchy ──
+  // â”€â”€ Hierarchy â”€â”€
   getHierarchy: async (): Promise<HierarchyLocation[]> => {
     const response = await axiosClient.get('/config/hierarchy');
     return response.data;
   },
 
-  // ── Locations ──
+  // â”€â”€ Locations â”€â”€
   getLocations: async (): Promise<BaseLocation[]> => {
     const response = await axiosClient.get('/config/locations');
     return response.data;
@@ -36,7 +37,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/locations/${id}`);
   },
 
-  // ── Business Units ──
+  // â”€â”€ Business Units â”€â”€
   getBusinessUnits: async (locationId?: string): Promise<BaseBusinessUnit[]> => {
     const params = locationId ? { location_id: locationId } : {};
     const response = await axiosClient.get('/config/business-units', { params });
@@ -54,7 +55,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/business-units/${id}`);
   },
 
-  // ── Processes ──
+  // â”€â”€ Processes â”€â”€
   getProcesses: async (businessUnitId?: string): Promise<BaseProcess[]> => {
     const params = businessUnitId ? { business_unit_id: businessUnitId } : {};
     const response = await axiosClient.get('/config/processes', { params });
@@ -72,7 +73,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/processes/${id}`);
   },
 
-  // ── Sectors ──
+  // â”€â”€ Sectors â”€â”€
   getSectors: async (): Promise<BaseSector[]> => {
     const response = await axiosClient.get('/config/sectors');
     return response.data;
@@ -89,7 +90,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/sectors/${id}`);
   },
 
-  // ── Clients ──
+  // â”€â”€ Clients â”€â”€
   getClients: async (sectorId?: string): Promise<ClientWithSector[]> => {
     const params = sectorId ? { sector_id: sectorId } : {};
     const response = await axiosClient.get('/config/clients', { params });
@@ -107,7 +108,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/clients/${id}`);
   },
 
-  // ── Products ──
+  // â”€â”€ Products â”€â”€
   getProducts: async (processId?: string, clientId?: string): Promise<BaseProduct[]> => {
     const params: Record<string, string> = {};
     if (processId) params.process_id = processId;
@@ -127,7 +128,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/products/${id}`);
   },
 
-  // ── Machines ──
+  // â”€â”€ Machines â”€â”€
   getMachines: async (processId?: string): Promise<BaseMachine[]> => {
     const params = processId ? { process_id: processId } : {};
     const response = await axiosClient.get('/config/machines', { params });
@@ -148,7 +149,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/machines/${id}`);
   },
 
-  // ── Maintenance Categories ──
+  // â”€â”€ Maintenance Categories â”€â”€
   getMaintenanceCategories: async (machineId?: string): Promise<BaseMaintenanceCategory[]> => {
     const params = machineId ? { machine_id: machineId } : {};
     const response = await axiosClient.get('/config/maintenance-categories', { params });
@@ -169,7 +170,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/maintenance-categories/${id}`);
   },
 
-  // ── Maintenance Faults ──
+  // â”€â”€ Maintenance Faults â”€â”€
   getMaintenanceFaults: async (categoryId?: string): Promise<BaseMaintenanceFault[]> => {
     const params = categoryId ? { category_id: categoryId } : {};
     const response = await axiosClient.get('/config/maintenance-faults', { params });
@@ -187,7 +188,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/maintenance-faults/${code}`);
   },
 
-  // ── Asset Families ──
+  // â”€â”€ Asset Families â”€â”€
   getAssetFamilies: async (machineId?: string): Promise<BaseAssetFamily[]> => {
     const params = machineId ? { machine_id: machineId } : {};
     const response = await axiosClient.get('/config/asset-families', { params });
@@ -224,7 +225,7 @@ export const baseDataApi = {
     await axiosClient.delete(`/config/asset-faults/${code}`);
   },
 
-  // ── Scrap Defects ──
+  // â”€â”€ Scrap Defects â”€â”€
   getScrapDefects: async (processId?: string): Promise<BaseScrapDefect[]> => {
     const params = processId ? { process_id: processId } : {};
     const response = await axiosClient.get('/config/scrap-defects', { params });

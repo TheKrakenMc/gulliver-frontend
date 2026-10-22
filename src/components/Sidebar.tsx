@@ -5,12 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   ClipboardList,
-  Wrench,
-  ShieldCheck,
-  Lightbulb,
   Truck,
   Menu,
-  Cog,
   Settings,
   Sun,
   Moon,

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import { LogIn, AlertCircle } from 'lucide-react';
 import { login } from '../api/authService';
 import { useGlobalStore } from '../store/globalStore';
 

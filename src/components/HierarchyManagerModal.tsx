@@ -12,7 +12,7 @@ interface HierarchyManagerModalProps {
 }
 
 export default function HierarchyManagerModal({ isOpen, onClose }: HierarchyManagerModalProps) {
-  const { t } = useTranslation();
+  useTranslation();
   const { hierarchy, fetchHierarchy } = useGlobalStore();
   
   // State for Selection

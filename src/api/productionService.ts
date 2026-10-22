@@ -1,5 +1,5 @@
 import axiosClient from './axiosClient';
-import type { PlanRecord, HourRecord, OperativeRecord } from '../types';
+import type { PlanRecord, HourRecord } from '../types';
 
 const appendExactIsoDateParams = (params: URLSearchParams, startDate?: string, endDate?: string) => {
   if (startDate) {
@@ -133,7 +133,7 @@ export const updateHourRecord = async (recordId: string, record: Partial<HourRec
   if (record.oeeLoss !== undefined) payload.oee_loss = record.oeeLoss;
   if (record.deviationNotified !== undefined) payload.deviation_notified = record.deviationNotified;
 
-  const { data } = await axiosClient.put(`/production-records/hour/${recordId}`, payload);
+  await axiosClient.put(`/production-records/hour/${recordId}`, payload);
   return record as HourRecord; // mapping would ideally be more robust
 };
 
