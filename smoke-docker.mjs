@@ -1,0 +1,17 @@
+import { chromium } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+const password = readFileSync('../.env.docker','utf8').match(/^DEV_DEMO_PASSWORD=(.+)$/m)[1].trim();
+const browser = await chromium.launch({headless:true});
+const page = await browser.newPage({viewport:{width:1280,height:800}});
+const errors=[];
+page.on('pageerror', e=>errors.push(e.message));
+await page.goto('http://localhost:5174');
+await page.getByLabel('Número de empleado').fill('1002');
+await page.getByLabel('Contraseña').fill(password);
+await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();
+await page.getByText('Operador Demo',{exact:false}).first().waitFor({timeout:30000});
+await page.waitForResponse(r=>r.url().includes('/api/v2/plans') && r.status()===200,{timeout:30000}).catch(()=>{});
+await page.screenshot({path:'docs/screenshots/docker-dev.png',fullPage:true});
+console.log(JSON.stringify({title:await page.title(),text:(await page.locator('body').innerText()).slice(0,1600),errors}));
+await browser.close();
+if(errors.length) process.exitCode=1;
