@@ -1,0 +1,60 @@
+name: Frontend
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint:operational
+      - run: npm test
+      - run: npm run build
+      - run: npm audit --audit-level=low
+  browser:
+    if: ${{ vars.GULLIVER_API_REPOSITORY != '' }}
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: gulliver
+          POSTGRES_PASSWORD: gulliver_test_only
+          POSTGRES_DB: gulliver_test
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U gulliver" --health-interval 5s --health-retries 10
+    env:
+      GULLIVER_TEST_DATABASE_URL: postgresql+psycopg2://gulliver:gulliver_test_only@localhost:5432/gulliver_test
+      GULLIVER_PYTHON: python
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: gulliver-frontend
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.GULLIVER_API_REPOSITORY }}
+          ref: ${{ vars.GULLIVER_API_REF || 'main' }}
+          token: ${{ secrets.GULLIVER_CI_TOKEN || github.token }}
+          path: gulliver-api
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r gulliver-api/requirements-lock.txt
+      - run: npm ci
+        working-directory: gulliver-frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: gulliver-frontend
+      - run: npm run test:e2e
+        working-directory: gulliver-frontend
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-evidence
+          path: gulliver-frontend/test-results

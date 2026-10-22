@@ -1,0 +1,2 @@
+# Sistema visual operativo
+Se extiende la identidad existente: azul #2563eb, encabezados slate #0f172a y superficies claras. Modo Operate: captura frecuente, con luz de planta y controles de al menos 48 px. Formularios de una columna en vertical y dos columnas en horizontal. Texto principal 16 px o mayor; secundario #475569 sobre blanco. Sin efectos decorativos en la captura. Los estados se expresan con texto además de color. Foco visible y respeto de movimiento reducido.
